@@ -102,7 +102,10 @@ tfoot td { font-weight: 700; border-top: 2px solid var(--ink-2); border-bottom: 
 .method { color: var(--ink-2); line-height: 1.6; max-width: 84ch; display: grid; gap: 10px; font-size: 14.5px; }
 .method p { margin: 0; }
 .method strong { color: var(--ink); }
-.source { color: var(--muted); font-size: 13px; }
+.method h3 { margin: 8px 0 0; font-size: 16px; font-weight: 600; color: var(--ink); }
+.sources { margin: 0; padding-left: 20px; display: grid; gap: 8px; color: var(--ink-2); font-size: 14px; line-height: 1.6; }
+.sources a { color: var(--ink); text-decoration: underline; text-decoration-color: var(--muted); text-underline-offset: 2px; }
+.sources a:hover { text-decoration-color: var(--ink); }
 :focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 </style>
 </head>
@@ -140,11 +143,23 @@ tfoot td { font-weight: 700; border-top: 2px solid var(--ink-2); border-bottom: 
 
   <section class="method">
     <h2>Méthode</h2>
-    <p><strong>Sources.</strong> Les montants viennent des quatre décompositions par famille de régimes (2025) : retraites de base du privé, retraites complémentaires, retraites des fonctionnaires, régimes spéciaux. La colonne de gauche regroupe les financements de même nature d'un régime à l'autre ; le détail par régime apparaît au survol.</p>
-    <p><strong>« Couvert » et « non couvert ».</strong> On suit la convention de ces documents. Est « couvert » ce que paient les cotisations à un taux de droit commun : salariés, indépendants, fonctionnaires, et employeurs publics au taux d'un employeur privé (25,44 % du traitement). Tout le reste est « non couvert » : surcotisations des employeurs publics au-delà de ce taux, CSG, impôts affectés, exonérations compensées par l'État, transferts des branches famille et chômage, subventions et emprunts. Le Conseil d'orientation des retraites retient une autre convention et aboutit à un déficit bien plus faible.</p>
+    <p><strong>Lecture.</strong> La colonne de gauche regroupe les financements de même nature d'un régime à l'autre ; le détail par régime apparaît au survol.</p>
     <p><strong>Lien avec la répartition Insee.</strong> Les dépenses de retraite atteignent ici 418,7 Md€, contre environ 422,5 Md€ dans la répartition Insee des dépenses publiques (253 € sur 1&nbsp;000). L'écart de 3,8 Md€ tient à l'année et au périmètre retenus. Les surcotisations des employeurs publics (46,3 Md€) sont une partie des cotisations retraite déjà repérées dans les budgets des ministères.</p>
-    <p><strong>Écarts d'arrondi.</strong> Les flux entre régimes (« versé par d'autres régimes », « reversé à d'autres régimes ») apparaissent des deux côtés : environ 2 à 3 Md€ sont donc comptés deux fois dans les ressources. Les totaux par régime des documents sources diffèrent parfois de 0,1 à 0,2 Md€ à cause des arrondis.</p>
-    <p class="source">Sources : décompositions par régime 2025 (Cnav, Agirc-Arrco, CNRACL, SRE, régimes spéciaux), répartition Insee des dépenses publiques.</p>
+    <h3>Sources</h3>
+    <ul class="sources">
+      <li><strong>Montants du schéma</strong> : décompositions 2025 par famille de régimes, en milliards d'euros. « Retraites de base du privé : 67,7 milliards d'euros de déficit réel » (Cnav, régimes agricoles, indépendants, professions libérales) ; « Retraites complémentaires : 8,9 milliards d'euros de déficit réel » (Agirc-Arrco, Ircantec, RAFP, complémentaires des indépendants et des libéraux) ; « Retraites des fonctionnaires : 50,1 milliards d'euros de déficit réel » (fonction publique d'État, territoriale et hospitalière, ouvriers d'État) ; « Régimes spéciaux : 10,2 milliards d'euros de déficit réel » (SNCF, RATP, électricité et gaz, mines, marins, Banque de France, notaires…).</li>
+      <li><strong>Total des dépenses publiques</strong> : Insee, répartition de 1&nbsp;000 € de dépenses publiques par fonction.</li>
+      <li><strong>Lexique</strong> :
+        <a href="https://www.senat.fr/rap/a25-747/a25-7471.html">Sénat, dette sociale portée par l'Urssaf (Acoss)</a> ·
+        <a href="https://www.cor-retraites.fr/sites/default/files/2019-06/doc-4315.pdf">COR, emprunts des régimes</a> ·
+        <a href="https://banquedesterritoires.fr/sites/default/files/ra/Le%20bilan%20des%20exon%C3%A9rations%202010%2C%20dans%20le%20n%C2%B0138%20d%27%22Acosstat%22%20%28novembre%202011%29.%20.pdf">Acoss, bilan des exonérations</a> ·
+        <a href="https://www.unedic.org/actualites/signature-dune-nouvelle-convention-financiere-entre-lunedic-et-lagirc">Unédic, convention avec l'Agirc-Arrco</a> ·
+        <a href="https://www.senat.fr/rap/l18-147-324/l18-147-3244.html">Sénat, subventions aux régimes spéciaux</a> ·
+        <a href="https://www.lafinancepourtous.com/decryptages/finance-perso/revenus-et-fiscalite/csg/">La finance pour tous, CSG</a> ·
+        <a href="https://www.caf.fr/sites/default/files/medias/cnaf/Nous_connaitre/Recherche_et_statistiques/Essentiel/34_2005_Avantages_familiaux_de_la_retraite_CNAF.pdf">Cnaf, avantages familiaux de retraite</a> ·
+        <a href="https://cor-retraites.fr/sites/default/files/2024-07/Fiche_AGIRC_ARRCO_vf.pdf">COR, fiche Agirc-Arrco</a> ·
+        <a href="https://www.previssima.fr/actualite/pas-de-hausse-avant-lautomne-lagirc-arrco-privilegie-ses-91-milliards-de-reserves.html">Previssima, réserves de l'Agirc-Arrco</a></li>
+    </ul>
   </section>
 </div>
 <div id="tip" hidden></div>
