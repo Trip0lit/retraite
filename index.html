@@ -345,8 +345,8 @@ const nodeTip = d => {
   return `<b>${d.name}</b><span class="amt">${fr(d.id === "depenses" ? totDep : d.value)} Md€</span>` + (d.note ? `<br><span class="d">${d.note}</span>` : "") +
     (rows.length > 1 ? "<br>" + rows.map(([n, v]) => `${n} : ${fr(v)}`).join("<br>") : "");
 };
-const highlight = pred => linkSel.attr("stroke-opacity", l => pred(l) ? 0.85 : 0.12);
-const reset = () => { linkSel.attr("stroke-opacity", 0.42); tip.hidden = true; };
+const highlight = pred => linkSel.attr("stroke-opacity", l => pred(l) ? 0.95 : 0.42).style("filter", l => pred(l) ? "brightness(1.35)" : null);
+const reset = () => { linkSel.attr("stroke-opacity", 0.42).style("filter", null); tip.hidden = true; };
 const showAt = (html, x, y) => { tip.innerHTML = html; tip.hidden = false; place(x, y); };
 
 linkSel
