@@ -1,0 +1,370 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Qui finance les retraites</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+/* Layout : carte sombre façon infographie — titre, carte « non couvert », légende, Sankey 4 colonnes, tableau par régime, méthode */
+:root {
+  color-scheme: dark;
+  --bg: #0c0e13;
+  --card: #151821;
+  --line: #262b37;
+  --ink: #f3f5f9;
+  --ink-2: #b6bdcb;
+  --muted: #7e8797;
+  --bar: #f3f5f9;
+  /* catégories de financement */
+  --c-cot: #4f7fd8;
+  --c-res: #74b6dc;
+  --c-surcot: #e5484d;
+  --c-exo: #f5b97a;
+  --c-csg: #e8743b;
+  --c-imp: #f09a52;
+  --c-etat: #e2b73d;
+  --c-fam: #9a6ee0;
+  --c-emp: #a3262b;
+  --c-trans: #b4bac6;
+  --c-autres: #6b7280;
+  --c-couvert: #4f7fd8;
+  --c-noncouvert: #e5484d;
+  --font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: 15px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 40px 64px;
+}
+.wrap { max-width: 1180px; margin: 0 auto; display: grid; gap: 22px; }
+.wrap > * { min-width: 0; }
+h1 { margin: 0; font-size: clamp(26px, 3.6vw, 38px); line-height: 1.15; font-weight: 800; letter-spacing: -0.01em; text-wrap: balance; }
+.sub { margin: 10px 0 0; color: var(--ink-2); font-size: 17px; line-height: 1.5; max-width: 80ch; }
+
+.kpi {
+  display: flex; align-items: center; gap: 18px;
+  background: var(--card); border: 1px solid var(--line); border-radius: 10px;
+  padding: 16px 20px;
+}
+.kpi svg { flex: none; }
+.kpi .big { font-size: 28px; font-weight: 800; color: var(--c-noncouvert); }
+.kpi .small { color: var(--ink-2); font-size: 14px; margin-top: 2px; font-variant-numeric: tabular-nums; }
+
+.legend { display: flex; flex-wrap: wrap; gap: 8px 18px; color: var(--ink-2); font-size: 14px; }
+.legend span { display: inline-flex; align-items: center; gap: 7px; }
+.legend i { width: 12px; height: 12px; border-radius: 2px; display: inline-block; }
+
+.chart-scroll { overflow-x: auto; }
+.chart { min-width: 900px; }
+.chart svg { display: block; width: 100%; height: auto; }
+.node-label { fill: var(--ink); font-size: 13px; font-weight: 600; paint-order: stroke; stroke: var(--bg); stroke-width: 4px; stroke-linejoin: round; pointer-events: none; }
+.node-label .val { font-weight: 700; }
+.node-label .note { fill: var(--muted); font-size: 11.5px; font-weight: 400; }
+.link { fill: none; mix-blend-mode: screen; transition: stroke-opacity .12s; cursor: pointer; }
+.node rect { cursor: pointer; }
+.hint { color: var(--muted); font-size: 13px; margin: 0; }
+
+#tip {
+  position: fixed; z-index: 10; pointer-events: none;
+  background: #ffffff; color: #11141b;
+  border-radius: 8px; padding: 10px 12px;
+  font-size: 13.5px; line-height: 1.45; max-width: 320px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.45);
+  font-variant-numeric: tabular-nums;
+}
+#tip b { display: block; font-size: 14.5px; margin-bottom: 2px; }
+#tip .amt { font-size: 20px; font-weight: 800; }
+#tip .d { color: #5a6272; }
+
+section h2 { margin: 0 0 10px; font-size: 19px; font-weight: 800; }
+.table-scroll { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; min-width: 560px; font-size: 14.5px; }
+th, td { padding: 9px 10px; border-bottom: 1px solid var(--line); text-align: right; }
+th:first-child, td:first-child { text-align: left; }
+thead th { color: var(--muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: .06em; }
+td.red { color: var(--c-noncouvert); font-weight: 700; }
+tfoot td { font-weight: 800; border-top: 2px solid var(--ink-2); border-bottom: 0; }
+.method { color: var(--ink-2); line-height: 1.6; max-width: 84ch; display: grid; gap: 10px; font-size: 14.5px; }
+.method p { margin: 0; }
+.method strong { color: var(--ink); }
+.source { color: var(--muted); font-size: 13px; }
+:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Retraites : 137 milliards d'euros de dépenses non couvertes par les cotisations, soit un tiers du total</h1>
+    <p class="sub">Qui finance les 419 Md€ de dépenses de retraite ? De gauche à droite : les sources de financement, les quatre familles de régimes, la part couverte ou non par les cotisations, puis les dépenses. 2025, en milliards d'euros.</p>
+  </header>
+
+  <div class="kpi" id="kpi"></div>
+
+  <div class="legend" id="legend"></div>
+
+  <div class="chart-scroll">
+    <div class="chart" id="chart" role="img" aria-label="Diagramme de flux des sources de financement des retraites vers les dépenses de retraite"></div>
+  </div>
+  <p class="hint">Survolez ou touchez un flux ou une barre pour voir le montant en milliards d'euros.</p>
+
+  <section>
+    <h2>Par famille de régimes</h2>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>Régimes</th><th>Dépenses</th><th>Couvert par les cotisations</th><th>Non couvert</th><th>Part non couverte</th></tr></thead>
+        <tbody id="regimes"></tbody>
+        <tfoot id="regimesTotal"></tfoot>
+      </table>
+    </div>
+  </section>
+
+  <section class="method">
+    <h2>Méthode</h2>
+    <p><strong>Sources.</strong> Les montants viennent des quatre décompositions par famille de régimes (2025) : retraites de base du privé, retraites complémentaires, retraites des fonctionnaires, régimes spéciaux. La colonne de gauche regroupe les financements de même nature d'un régime à l'autre ; le détail par régime apparaît au survol.</p>
+    <p><strong>« Couvert » et « non couvert ».</strong> On suit la convention de ces documents. Est « couvert » ce que paient les cotisations à un taux de droit commun : salariés, indépendants, fonctionnaires, et employeurs publics au taux d'un employeur privé (25,44 % du traitement). Tout le reste est « non couvert » : surcotisations des employeurs publics au-delà de ce taux, CSG, impôts affectés, exonérations compensées par l'État, transferts des branches famille et chômage, subventions et emprunts. Le Conseil d'orientation des retraites retient une autre convention et aboutit à un déficit bien plus faible.</p>
+    <p><strong>Lien avec la répartition Insee.</strong> Les dépenses de retraite atteignent ici 418,7 Md€, contre environ 422,5 Md€ dans la répartition Insee des dépenses publiques (253 € sur 1&nbsp;000). L'écart de 3,8 Md€ tient à l'année et au périmètre retenus. Les surcotisations des employeurs publics (46,3 Md€) sont une partie des cotisations retraite déjà repérées dans les budgets des ministères.</p>
+    <p><strong>Écarts d'arrondi.</strong> Les flux entre régimes (« versé par d'autres régimes », « reversé à d'autres régimes ») apparaissent des deux côtés : environ 2 à 3 Md€ sont donc comptés deux fois dans les ressources. Les totaux par régime des documents sources diffèrent parfois de 0,1 à 0,2 Md€ à cause des arrondis.</p>
+    <p class="source">Sources : décompositions par régime 2025 (Cnav, Agirc-Arrco, CNRACL, SRE, régimes spéciaux), répartition Insee des dépenses publiques.</p>
+  </section>
+</div>
+<div id="tip" hidden></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/d3-sankey@0.12.3/dist/d3-sankey.min.js"></script>
+<script>
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const fr = x => x.toLocaleString("fr-FR", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+
+// Catégories de financement (légende et couleurs)
+const CAT = {
+  cot:    { label: "Cotisations", color: css("--c-cot") },
+  res:    { label: "Produits des réserves", color: css("--c-res") },
+  surcot: { label: "Surcotisations", color: css("--c-surcot") },
+  exo:    { label: "Exonérations compensées", color: css("--c-exo") },
+  csg:    { label: "CSG", color: css("--c-csg") },
+  imp:    { label: "Impôts affectés", color: css("--c-imp") },
+  etat:   { label: "État", color: css("--c-etat") },
+  fam:    { label: "Famille, chômage", color: css("--c-fam") },
+  emp:    { label: "Emprunt non financé", color: css("--c-emp") },
+  trans:  { label: "Autres régimes", color: css("--c-trans") },
+  autres: { label: "Autres", color: css("--c-autres") },
+};
+
+// Colonne 1 : sources de financement (Md€, 2025)
+const SOURCES = [
+  { id: "cot_prive", cat: "cot", name: "Cotisations des salariés et indépendants", note: "parts salariale et patronale" },
+  { id: "emp_pub", cat: "cot", name: "Employeurs publics, au taux du privé", note: "25,44 % du traitement" },
+  { id: "cot_fonc", cat: "cot", name: "Cotisations des fonctionnaires", note: "retenue de 11,1 % sur le traitement" },
+  { id: "cot_spe", cat: "cot", name: "Cotisations des régimes spéciaux", note: "y compris produits des réserves" },
+  { id: "reserves", cat: "res", name: "Produits des réserves", note: "placements de l'Agirc-Arrco" },
+  { id: "surcot", cat: "surcot", name: "Surcotisations des employeurs publics", note: "État 78 à 126 %, CNRACL, SNCF, BdF" },
+  { id: "exo", cat: "exo", name: "Exonérations compensées par l'État", note: "allègements de charges remboursés" },
+  { id: "csg", cat: "csg", name: "CSG", note: "trimestres des chômeurs, minimum vieillesse" },
+  { id: "impots", cat: "imp", name: "Impôts et taxes affectés", note: "taxe sur les salaires, C3S, taxe électricité-gaz" },
+  { id: "etat", cat: "etat", name: "Subventions de l'État", note: "régimes spéciaux, ouvriers de l'État" },
+  { id: "famille", cat: "fam", name: "Branche famille", note: "majorations pour enfants, parents au foyer" },
+  { id: "unedic", cat: "fam", name: "Unédic et autres organismes", note: "points accordés aux chômeurs" },
+  { id: "emprunt", cat: "emp", name: "Emprunt de l'Urssaf", note: "déficits Cnav et CNRACL, sans financement prévu" },
+  { id: "transferts", cat: "trans", name: "Versé par d'autres régimes", note: "Cnav, Agirc-Arrco" },
+  { id: "autres", cat: "autres", name: "Autres", note: "" },
+];
+
+// Colonne 2 : familles de régimes ; colonne 3 : couvert / non couvert ; colonne 4 : dépenses
+const REGIMES = [
+  { id: "base", name: "Retraites de base du privé", note: "Cnav, agricoles, indépendants, libéraux", dep: 187.8, couvert: 120.2, non: 67.7 },
+  { id: "compl", name: "Retraites complémentaires", note: "Agirc-Arrco, Ircantec, RAFP…", dep: 117.1, couvert: 108.2, non: 8.9 },
+  { id: "fonc", name: "Retraites des fonctionnaires", note: "État, territoriale, hospitalière", dep: 96.0, couvert: 45.9, non: 50.1 },
+  { id: "spe", name: "Régimes spéciaux", note: "SNCF, RATP, électricité-gaz, mines…", dep: 17.8, couvert: 7.6, non: 10.2 },
+];
+const STATUS = [
+  { id: "couvert", name: "Couvert par les cotisations", color: css("--c-couvert") },
+  { id: "non", name: "Non couvert", color: css("--c-noncouvert") },
+  { id: "reserve", name: "Mis en réserve", color: css("--c-autres"), note: "excédents Agirc-Arrco, RAFP, Banque de France" },
+  { id: "reverse", name: "Reversé à d'autres régimes", color: css("--c-trans"), note: "par la Cnav" },
+];
+const FINAL = { id: "depenses", name: "Dépenses de retraite", note: "pensions versées et frais de gestion" };
+
+// Flux sources → régimes, avec le détail tel qu'il figure dans chaque décomposition
+const FLOWS = [
+  ["cot_prive", "base", 120.2, "Cotisations des actifs, salariés et indépendants"],
+  ["cot_prive", "compl", 105.6, "Agirc-Arrco, indépendants, Ircantec, RAFP"],
+  ["emp_pub", "fonc", 31.5, "Employeurs publics, comme un employeur privé"],
+  ["cot_fonc", "fonc", 14.4, "Retenue de 11,1 % sur le traitement"],
+  ["cot_spe", "spe", 7.7, "Part patronale SNCF au taux de droit commun, produits des réserves"],
+  ["reserves", "compl", 5.7, "Placements des réserves (91 Md€ à l'Agirc-Arrco)"],
+  ["surcot", "fonc", 45.4, "État 78 à 126 %, CNRACL 35 % du traitement"],
+  ["surcot", "spe", 0.9, "SNCF, Banque de France : part patronale au-delà du droit commun"],
+  ["exo", "base", 16.7, "Allègements de charges remboursés par l'État"],
+  ["exo", "compl", 8.3, "Allègements remboursés, dont 0,8 payés par la Cnav"],
+  ["csg", "base", 21.5, "Trimestres des chômeurs, minimum vieillesse (ex-FSV)"],
+  ["impots", "base", 14.9, "Taxe sur les salaires, C3S, forfait social…"],
+  ["impots", "spe", 2.2, "Taxe sur les factures d'électricité et de gaz (CTA)"],
+  ["impots", "compl", 0.6, "Impôts affectés"],
+  ["etat", "spe", 5.8, "Dont 5,0 versés via la Cnav (SNCF, RATP, mines)"],
+  ["etat", "fonc", 1.8, "Surtout ouvriers de l'État (FSPOEIE)"],
+  ["famille", "base", 10.7, "Majorations pour enfants, parents au foyer"],
+  ["unedic", "compl", 5.8, "Points de retraite accordés aux chômeurs"],
+  ["emprunt", "base", 6.0, "Dette à court terme de l'Urssaf (déficit Cnav)"],
+  ["emprunt", "fonc", 2.3, "Déficit CNRACL, territoriaux et hospitaliers"],
+  ["transferts", "spe", 2.0, "Cnav 1,8, Agirc-Arrco 0,2 (adossement IEG, SNCF)"],
+  ["transferts", "fonc", 0.4, "Compensation démographique versée par la Cnav"],
+  ["autres", "base", 0.7, ""],
+  ["autres", "spe", 0.6, ""],
+  ["autres", "fonc", 0.2, ""],
+];
+const OUTS = [
+  ["base", "reverse", 3.1, "Aux régimes spéciaux 1,8, à l'Agirc-Arrco 0,8, à la fonction publique 0,4"],
+  ["compl", "reserve", 8.7, "Excédent et fonds du RAFP"],
+  ["spe", "reserve", 1.3, "Excédents et réserve de la Banque de France"],
+];
+
+// Construction du graphe
+const nodes = [
+  ...SOURCES.map(s => ({ ...s, col: 0, color: CAT[s.cat].color })),
+  ...REGIMES.map(r => ({ ...r, col: 1, color: css("--bar") })),
+  ...STATUS.map(s => ({ ...s, col: 2 })),
+  { ...FINAL, col: 3, color: css("--bar") },
+];
+const byId = Object.fromEntries(nodes.map(n => [n.id, n]));
+const links = [];
+for (const [s, t, v, d] of FLOWS) links.push({ source: s, target: t, value: v, detail: d, color: byId[s].color, kind: "src" });
+for (const r of REGIMES) {
+  links.push({ source: r.id, target: "couvert", value: r.couvert, detail: "Part des dépenses payée par les cotisations", color: css("--c-couvert"), kind: "status" });
+  links.push({ source: r.id, target: "non", value: r.non, detail: "Part des dépenses payée par d'autres ressources", color: css("--c-noncouvert"), kind: "status" });
+}
+for (const [s, t, v, d] of OUTS) links.push({ source: s, target: t, value: v, detail: d, color: byId[t].color, kind: "status" });
+const sumBy = (arr, f) => arr.reduce((a, x) => a + f(x), 0);
+const totCouvert = sumBy(REGIMES, r => r.couvert), totNon = sumBy(REGIMES, r => r.non), totDep = sumBy(REGIMES, r => r.dep);
+links.push({ source: "couvert", target: "depenses", value: totCouvert, detail: "Dépenses payées par les cotisations", color: css("--c-couvert"), kind: "final" });
+links.push({ source: "non", target: "depenses", value: totNon, detail: "Dépenses payées par d'autres ressources", color: css("--c-noncouvert"), kind: "final" });
+
+// Carte « non couvert »
+(() => {
+  const share = totNon / (totCouvert + totNon);
+  const r = 22, c = 2 * Math.PI * r;
+  document.getElementById("kpi").innerHTML =
+    `<svg width="56" height="56" viewBox="0 0 56 56" aria-hidden="true">
+       <circle cx="28" cy="28" r="${r}" fill="none" stroke="#2b303c" stroke-width="9"/>
+       <circle cx="28" cy="28" r="${r}" fill="none" stroke="${css("--c-noncouvert")}" stroke-width="9"
+         stroke-dasharray="${c * share} ${c}" transform="rotate(-90 28 28)"/>
+     </svg>
+     <div><div class="big">${Math.round(share * 100)} % non couvert</div>
+     <div class="small">${fr(totNon)} Md€ non couverts sur ${fr(totDep)} Md€ dépensés · ${fr(totCouvert)} Md€ couverts par les cotisations</div></div>`;
+})();
+
+// Légende
+document.getElementById("legend").innerHTML = Object.values(CAT)
+  .map(c => `<span><i style="background:${c.color}"></i>${c.label}</span>`).join("");
+
+// Sankey
+const W = 1180, H = 900, M = { l: 340, r: 190, t: 14, b: 14 };
+const sankey = d3.sankey()
+  .nodeId(d => d.id)
+  .nodeAlign(d => d.col)
+  .nodeWidth(10)
+  .nodePadding(16)
+  .nodeSort(null)
+  .linkSort(null)
+  .extent([[M.l, M.t], [W - M.r, H - M.b]]);
+const graph = sankey({ nodes: nodes.map(d => ({ ...d })), links: links.map(d => ({ ...d })) });
+
+const svg = d3.select("#chart").append("svg").attr("viewBox", `0 0 ${W} ${H}`);
+const linkSel = svg.append("g").selectAll("path").data(graph.links).join("path")
+  .attr("class", "link")
+  .attr("d", d3.sankeyLinkHorizontal())
+  .attr("stroke", d => d.color)
+  .attr("stroke-opacity", 0.42)
+  .attr("stroke-width", d => Math.max(1.5, d.width))
+  .attr("tabindex", 0)
+  .attr("aria-label", d => `${d.source.name} vers ${d.target.name} : ${fr(d.value)} milliards d'euros`);
+
+const nodeSel = svg.append("g").selectAll("g").data(graph.nodes).join("g").attr("class", "node");
+nodeSel.append("rect")
+  .attr("x", d => d.x0).attr("y", d => d.y0)
+  .attr("width", d => d.x1 - d.x0).attr("height", d => Math.max(2, d.y1 - d.y0))
+  .attr("rx", 2)
+  .attr("fill", d => d.color)
+  .attr("tabindex", 0)
+  .attr("aria-label", d => `${d.name} : ${fr(d.value)} milliards d'euros`);
+
+// Étiquettes : à gauche pour les sources, à droite pour les autres colonnes
+const label = nodeSel.append("text").attr("class", "node-label")
+  .attr("x", d => d.col === 0 ? d.x0 - 10 : d.x1 + 10)
+  .attr("y", d => (d.y0 + d.y1) / 2)
+  .attr("text-anchor", d => d.col === 0 ? "end" : "start")
+  .attr("dominant-baseline", "middle");
+label.each(function (d) {
+  const t = d3.select(this);
+  const big = d.y1 - d.y0 > 34;
+  const value = d.col === 1 ? d.dep : d.id === "depenses" ? totDep : d.value;
+  if (d.col === 0) {
+    t.append("tspan").text(d.name + " ");
+    t.append("tspan").attr("class", "val").attr("fill", d.color === css("--c-autres") ? css("--ink-2") : d.color).text(fr(d.value));
+    if (big && d.note) t.append("tspan").attr("class", "note").attr("x", d.x0 - 10).attr("dy", "1.35em").text(d.note);
+    if (big && d.note) t.attr("dy", "-0.6em");
+  } else if (!big && d.col === 2) {
+    t.append("tspan").text(d.name + " ");
+    t.append("tspan").attr("class", "val").text(fr(value));
+  } else {
+    t.append("tspan").text(d.name);
+    t.append("tspan").attr("class", "val").attr("x", d.x1 + 10).attr("dy", "1.3em")
+      .attr("fill", d.id === "non" ? css("--c-noncouvert") : css("--ink"))
+      .text(fr(value) + " Md€" + (d.col === 1 ? " dépensés" : ""));
+    t.attr("dy", "-0.6em");
+  }
+});
+
+// Infobulle
+const tip = document.getElementById("tip");
+const place = (x, y) => {
+  const tw = tip.offsetWidth, th = tip.offsetHeight;
+  tip.style.left = Math.max(8, Math.min(x + 16, innerWidth - tw - 8)) + "px";
+  tip.style.top = Math.max(8, Math.min(y + 16, innerHeight - th - 8)) + "px";
+};
+const linkTip = d => {
+  let pct = "";
+  if (d.kind === "src") pct = `${Math.round(d.value / d.target.value * 100)} % des ressources du régime`;
+  if (d.kind === "status" && (d.target.id === "couvert" || d.target.id === "non")) pct = `${Math.round(d.value / d.source.dep * 100)} % de ses dépenses`;
+  if (d.kind === "final") pct = `${Math.round(d.value / totDep * 100)} % des dépenses de retraite`;
+  return `<b>${d.source.name} → ${d.target.name}</b><span class="amt">${fr(d.value)} Md€</span>` +
+    (pct ? `<br>${pct}` : "") + (d.detail ? `<br><span class="d">${d.detail}</span>` : "");
+};
+const nodeTip = d => {
+  if (d.col === 1) {
+    return `<b>${d.name}</b><span class="d">${d.note}</span><br>Dépenses : <strong>${fr(d.dep)} Md€</strong>` +
+      `<br>Couvert : ${fr(d.couvert)} Md€<br>Non couvert : <strong>${fr(d.non)} Md€</strong> (${Math.round(d.non / d.dep * 100)} %)`;
+  }
+  const rows = (d.col === 0 ? d.sourceLinks.map(l => [l.target.name, l.value]) : d.targetLinks.map(l => [l.source.name, l.value]));
+  return `<b>${d.name}</b><span class="amt">${fr(d.id === "depenses" ? totDep : d.value)} Md€</span>` + (d.note ? `<br><span class="d">${d.note}</span>` : "") +
+    (rows.length > 1 ? "<br>" + rows.map(([n, v]) => `${n} : ${fr(v)}`).join("<br>") : "");
+};
+const highlight = pred => linkSel.attr("stroke-opacity", l => pred(l) ? 0.85 : 0.12);
+const reset = () => { linkSel.attr("stroke-opacity", 0.42); tip.hidden = true; };
+const showAt = (html, x, y) => { tip.innerHTML = html; tip.hidden = false; place(x, y); };
+
+linkSel
+  .on("pointerenter pointermove", (e, d) => { highlight(l => l === d); showAt(linkTip(d), e.clientX, e.clientY); })
+  .on("pointerleave", reset)
+  .on("focus", function (e, d) { const r = this.getBoundingClientRect(); highlight(l => l === d); showAt(linkTip(d), r.left + r.width / 2, r.top + r.height / 2); })
+  .on("blur", reset);
+nodeSel.select("rect")
+  .on("pointerenter pointermove", (e, d) => { highlight(l => l.source === d || l.target === d); showAt(nodeTip(d), e.clientX, e.clientY); })
+  .on("pointerleave", reset)
+  .on("focus", function (e, d) { const r = this.getBoundingClientRect(); highlight(l => l.source === d || l.target === d); showAt(nodeTip(d), r.right, r.top); })
+  .on("blur", reset);
+
+// Tableau par régime
+document.getElementById("regimes").innerHTML = REGIMES.map(r =>
+  `<tr><td>${r.name}</td><td>${fr(r.dep)}</td><td>${fr(r.couvert)}</td><td class="red">${fr(r.non)}</td><td>${Math.round(r.non / r.dep * 100)} %</td></tr>`).join("");
+document.getElementById("regimesTotal").innerHTML =
+  `<tr><td>Total</td><td>${fr(totDep)}</td><td>${fr(totCouvert)}</td><td class="red">${fr(totNon)}</td><td>${Math.round(totNon / totDep * 100)} %</td></tr>`;
+</script>
+</body>
+</html>
