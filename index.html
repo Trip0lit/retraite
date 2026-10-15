@@ -70,6 +70,10 @@ h1 { margin: 0; font-size: clamp(26px, 3.6vw, 38px); line-height: 1.15; font-wei
 .link { fill: none; mix-blend-mode: screen; transition: stroke-opacity .12s; cursor: pointer; }
 .node rect { cursor: pointer; }
 .hint { color: var(--muted); font-size: 13px; margin: 0; }
+.lexique dl { margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(330px, 100%), 1fr)); gap: 16px 32px; }
+.lexique dt { font-weight: 700; display: flex; align-items: center; gap: 8px; }
+.lexique dt i { width: 10px; height: 10px; border-radius: 2px; flex: none; }
+.lexique dd { margin: 4px 0 0; color: var(--ink-2); line-height: 1.5; font-size: 14.5px; }
 
 #tip {
   position: fixed; z-index: 10; pointer-events: none;
@@ -82,6 +86,7 @@ h1 { margin: 0; font-size: clamp(26px, 3.6vw, 38px); line-height: 1.15; font-wei
 #tip b { display: block; font-size: 14.5px; margin-bottom: 2px; }
 #tip .amt { font-size: 20px; font-weight: 800; }
 #tip .d { color: #5a6272; }
+#tip .def { display: block; margin-top: 6px; padding-top: 6px; border-top: 1px solid #e3e6ec; color: #3d4452; font-size: 13px; }
 
 section h2 { margin: 0 0 10px; font-size: 19px; font-weight: 800; }
 .table-scroll { overflow-x: auto; }
@@ -112,7 +117,12 @@ tfoot td { font-weight: 800; border-top: 2px solid var(--ink-2); border-bottom: 
   <div class="chart-scroll">
     <div class="chart" id="chart" role="img" aria-label="Diagramme de flux des sources de financement des retraites vers les dépenses de retraite"></div>
   </div>
-  <p class="hint">Survolez ou touchez un flux ou une barre pour voir le montant en milliards d'euros.</p>
+  <p class="hint">Survolez ou touchez un flux ou une barre pour voir le montant en milliards d'euros et, pour les termes techniques, leur définition.</p>
+
+  <section class="lexique">
+    <h2>Lexique</h2>
+    <dl id="lexique"></dl>
+  </section>
 
   <section>
     <h2>Par famille de régimes</h2>
@@ -224,6 +234,21 @@ const OUTS = [
   ["compl", "reserve", 8.7, "Excédent et fonds du RAFP"],
   ["spe", "reserve", 1.3, "Excédents et réserve de la Banque de France"],
 ];
+
+// Lexique : définitions courtes, reprises dans les infobulles
+const LEXIQUE = [
+  { id: "compl", term: "Retraites complémentaires", def: "Deuxième pension, qui s'ajoute à la retraite de base. Pour les salariés du privé, c'est l'Agirc-Arrco, gérée par les syndicats et le patronat, qui fonctionne par points. Les contractuels du public ont l'Ircantec, les fonctionnaires le RAFP (sur leurs primes)." },
+  { id: "spe", term: "Régimes spéciaux", def: "Caisses de retraite propres à certaines entreprises ou professions, avec leurs propres règles : SNCF, RATP, électricité et gaz, mines, marins, Banque de France… Ils comptent souvent plus de retraités que d'actifs. La SNCF et la RATP n'y affilient plus les nouveaux embauchés depuis 2020 et 2023." },
+  { id: "csg", term: "CSG", def: "Contribution sociale généralisée. Impôt prélevé sur presque tous les revenus (9,2 % sur les salaires, mais aussi sur les pensions et les revenus du capital) pour financer la Sécurité sociale. Il va surtout à la santé ; une partie paie le minimum vieillesse et les trimestres de retraite des chômeurs." },
+  { id: "famille", term: "Branche famille", def: "Partie de la Sécurité sociale qui verse les prestations familiales (les Caf). Elle paie aussi des droits à la retraite liés aux enfants : cotisations pour les parents qui s'arrêtent de travailler (assurance vieillesse des parents au foyer) et majoration de 10 % pour trois enfants ou plus." },
+  { id: "reserve", term: "Mis en réserve", def: "Argent reçu dans l'année mais pas dépensé, placé de côté. L'Agirc-Arrco doit garder au moins six mois de pensions d'avance ; ses réserves atteignaient 91 Md€ fin 2025." },
+  { id: "exo", term: "Exonérations compensées par l'État", def: "Pour baisser le coût du travail, notamment sur les bas salaires, les employeurs paient moins de cotisations (« allègements généraux »). Depuis une loi de 1994, l'État doit rembourser ce manque à gagner aux caisses, sur son propre budget." },
+  { id: "etat", term: "Subventions de l'État", def: "Argent versé par le budget de l'État pour équilibrer des régimes dont les cotisations ne suffisent pas, surtout les régimes spéciaux (SNCF, RATP, mines…), où il y a parfois un actif pour deux retraités." },
+  { id: "unedic", term: "Unédic", def: "Organisme, géré par les syndicats et le patronat, qui pilote l'assurance chômage. Il verse de l'argent à l'Agirc-Arrco pour que les chômeurs indemnisés continuent d'acquérir des points de retraite complémentaire." },
+  { id: "emprunt", term: "Emprunt de l'Urssaf", def: "L'Urssaf (Acoss) est le trésorier de la Sécurité sociale. Quand une caisse de retraite est en déficit (Cnav pour le privé, CNRACL pour les fonctionnaires territoriaux et hospitaliers), elle emprunte à court terme sur les marchés financiers. Cette dette n'a pas de financement prévu : fin 2025, elle portait 16,6 Md€ de déficits de la branche vieillesse et 12,3 Md€ de la CNRACL." },
+];
+const LEX = Object.fromEntries(LEXIQUE.map(l => [l.id, l]));
+const defHtml = id => LEX[id] ? `<span class="def">${LEX[id].def}</span>` : "";
 
 // Construction du graphe
 const nodes = [
@@ -339,11 +364,11 @@ const linkTip = d => {
 const nodeTip = d => {
   if (d.col === 1) {
     return `<b>${d.name}</b><span class="d">${d.note}</span><br>Dépenses : <strong>${fr(d.dep)} Md€</strong>` +
-      `<br>Couvert : ${fr(d.couvert)} Md€<br>Non couvert : <strong>${fr(d.non)} Md€</strong> (${Math.round(d.non / d.dep * 100)} %)`;
+      `<br>Couvert : ${fr(d.couvert)} Md€<br>Non couvert : <strong>${fr(d.non)} Md€</strong> (${Math.round(d.non / d.dep * 100)} %)` + defHtml(d.id);
   }
   const rows = (d.col === 0 ? d.sourceLinks.map(l => [l.target.name, l.value]) : d.targetLinks.map(l => [l.source.name, l.value]));
   return `<b>${d.name}</b><span class="amt">${fr(d.id === "depenses" ? totDep : d.value)} Md€</span>` + (d.note ? `<br><span class="d">${d.note}</span>` : "") +
-    (rows.length > 1 ? "<br>" + rows.map(([n, v]) => `${n} : ${fr(v)}`).join("<br>") : "");
+    (rows.length > 1 ? "<br>" + rows.map(([n, v]) => `${n} : ${fr(v)}`).join("<br>") : "") + defHtml(d.id);
 };
 const highlight = pred => linkSel.attr("stroke-opacity", l => pred(l) ? 0.95 : 0.42).style("filter", l => pred(l) ? "brightness(1.35)" : null);
 const reset = () => { linkSel.attr("stroke-opacity", 0.42).style("filter", null); tip.hidden = true; };
@@ -359,6 +384,13 @@ nodeSel.select("rect")
   .on("pointerleave", reset)
   .on("focus", function (e, d) { const r = this.getBoundingClientRect(); highlight(l => l.source === d || l.target === d); showAt(nodeTip(d), r.right, r.top); })
   .on("blur", reset);
+
+// Lexique
+document.getElementById("lexique").innerHTML = LEXIQUE.map(l => {
+  const n = byId[l.id];
+  const sw = n && n.col === 0 ? `<i style="background:${n.color}"></i>` : n && n.col === 2 ? `<i style="background:${n.color}"></i>` : `<i style="background:${css("--bar")}"></i>`;
+  return `<div><dt>${sw}${l.term}</dt><dd>${l.def}</dd></div>`;
+}).join("");
 
 // Tableau par régime
 document.getElementById("regimes").innerHTML = REGIMES.map(r =>
