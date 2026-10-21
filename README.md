@@ -1,14 +1,16 @@
 # retraite
 
-Schéma interactif : qui finance les retraites en France (2025, en milliards d'euros).
+Dossier chiffré sur les retraites françaises : leur coût réel, qui les finance, et pourquoi le contrat entre générations ne tient plus.
 
-Ouvrir `index.html` dans un navigateur. Le schéma se lit de gauche à droite :
+## Pages
 
-1. **Sources de financement** : cotisations, surcotisations des employeurs publics, CSG, impôts affectés, exonérations compensées, subventions de l'État, branches famille et chômage, emprunt.
-2. **Familles de régimes** : base du privé, complémentaires, fonctionnaires, régimes spéciaux.
-3. **Couvert ou non couvert** par les cotisations.
-4. **Dépenses de retraite** (418,7 Md€).
+- `index.html` : le dossier complet, en six chapitres, avec ses graphiques interactifs et ses sources.
+- `financement.html` : le schéma détaillé du financement des retraites (sources de financement, familles de régimes, part couverte ou non par les cotisations), avec un lexique des termes techniques.
 
-Survoler (ou toucher) un flux ou une barre affiche le montant en milliards d'euros et son détail par régime.
+Survoler (ou toucher) un graphique affiche les montants et leur source.
 
-Les montants et la convention « couvert / non couvert » viennent des quatre décompositions par famille de régimes. La méthode est détaillée en bas de la page.
+## Publication
+
+Le site est conçu pour GitHub Pages : **Settings → Pages → Deploy from a branch → `main`, dossier `/ (root)`**. Il sera alors accessible à l'adresse `https://trip0lit.github.io/retraite/`.
+
+Les pages chargent la police IBM Plex depuis Google Fonts et la bibliothèque d3 depuis un CDN : une connexion internet est nécessaire pour les afficher.
