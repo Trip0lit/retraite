@@ -3,418 +3,668 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Qui finance les retraites</title>
-<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Le coût réel des retraites, qui les finance et pourquoi le contrat entre générations ne tient plus : dossier chiffré et sourcé.">
+<title>Les retraites françaises</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Serif:ital,wght@0,400;0,500;1,400&display=swap">
 <style>
-/* Layout : carte sombre façon infographie — titre, carte « non couvert », légende, Sankey 4 colonnes, tableau par régime, méthode */
+/* Layout : dossier long format sur fond sombre — colonne de lecture de 68 caractères, graphiques en cartes plus larges que le texte, chapitres numérotés (ordre réel de l'argumentation) */
 :root {
   color-scheme: dark;
   --bg: #0c0e13;
   --card: #151821;
   --line: #262b37;
+  --grid: #222734;
   --ink: #f3f5f9;
-  --ink-2: #b6bdcb;
+  --ink-2: #c3c9d6;
   --muted: #7e8797;
-  --bar: #f3f5f9;
-  /* catégories de financement */
-  --c-cot: #4f7fd8;
-  --c-res: #74b6dc;
-  --c-surcot: #e5484d;
-  --c-exo: #f5b97a;
-  --c-csg: #e8743b;
-  --c-imp: #f09a52;
-  --c-etat: #e2b73d;
-  --c-fam: #9a6ee0;
-  --c-emp: #a3262b;
-  --c-trans: #b4bac6;
-  --c-autres: #6b7280;
-  --c-couvert: #4f7fd8;
-  --c-noncouvert: #e5484d;
-  --font: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
+  --blue: #4f7fd8;
+  --sky: #74b6dc;
+  --red: #e5484d;
+  --orange: #f09a52;
+  --amber: #e2b73d;
+  --violet: #9a6ee0;
+  --slate: #6b7280;
+  --wine: #a3262b;
+  --ok: #3fb68b;
+  --sans: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
+  --serif: "IBM Plex Serif", Georgia, "Times New Roman", serif;
 }
 * { box-sizing: border-box; }
-html, body { margin: 0; }
 body {
-  background: var(--bg);
-  color: var(--ink);
-  font-family: var(--font);
-  font-size: 15px;
+  margin: 0; background: var(--bg); color: var(--ink); font-family: var(--sans); font-size: 16px;
   padding-left: max(16px, env(safe-area-inset-left, 0px));
   padding-right: max(16px, env(safe-area-inset-right, 0px));
-  padding-block: 40px 64px;
+  padding-block: 48px 72px;
 }
-.wrap { max-width: 1180px; margin: 0 auto; display: grid; gap: 22px; }
-.wrap > * { min-width: 0; }
-h1 { margin: 0; font-size: clamp(26px, 3.6vw, 38px); line-height: 1.18; font-weight: 600; letter-spacing: -0.015em; text-wrap: balance; }
-.sub { margin: 10px 0 0; color: var(--ink-2); font-size: 17px; line-height: 1.5; max-width: 80ch; }
+.page { max-width: 1040px; margin: 0 auto; display: grid; gap: 28px; }
+.page > * { min-width: 0; }
+.prose { display: grid; gap: 14px; }
+/* Colonne de lecture centrée : texte, titres, encadrés et frise partagent le même bord gauche */
+header, .prose, .callout, blockquote, .timeline, h3, .chapter > div:first-child { width: 100%; max-width: 700px; margin-inline: auto; }
+.prose p { margin: 0; font-family: var(--serif); font-size: 17.5px; line-height: 1.68; color: var(--ink-2); }
+.prose p strong { color: var(--ink); font-weight: 500; }
+.prose ul { margin: 0; padding-left: 22px; font-family: var(--serif); font-size: 17px; line-height: 1.65; color: var(--ink-2); display: grid; gap: 6px; }
+a { color: var(--ink); text-decoration-color: var(--muted); text-underline-offset: 3px; }
 
-.kpi {
-  display: flex; align-items: center; gap: 18px;
-  background: var(--card); border: 1px solid var(--line); border-radius: 10px;
-  padding: 16px 20px;
-}
-.kpi svg { flex: none; }
-.kpi .big { font-size: 28px; font-weight: 600; color: var(--c-noncouvert); }
-.kpi .small { color: var(--ink-2); font-size: 14px; margin-top: 2px; font-variant-numeric: tabular-nums; }
+/* En-tête */
+.kicker { color: var(--muted); font-size: 12.5px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; }
+h1 { margin: 8px 0 0; font-size: clamp(34px, 5.4vw, 58px); line-height: 1.05; font-weight: 600; letter-spacing: -0.02em; text-wrap: balance; max-width: 18ch; }
+.lede { margin: 16px 0 0; font-family: var(--serif); font-size: clamp(18px, 2vw, 21px); line-height: 1.55; color: var(--ink-2); max-width: 60ch; }
+.figures { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+.figures div { background: var(--card); padding: 16px 18px; }
+.figures b { display: block; font-size: 30px; font-weight: 600; letter-spacing: -0.01em; font-variant-numeric: tabular-nums; }
+.figures b.red { color: var(--red); }
+.figures span { display: block; margin-top: 4px; color: var(--ink-2); font-size: 13.5px; line-height: 1.45; }
 
-.legend { display: flex; flex-wrap: wrap; gap: 8px 18px; color: var(--ink-2); font-size: 14px; }
-.legend span { display: inline-flex; align-items: center; gap: 7px; }
-.legend i { width: 12px; height: 12px; border-radius: 2px; display: inline-block; }
+nav.toc { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 14px 0; }
+nav.toc ol { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr)); gap: 8px 20px; counter-reset: ch; }
+nav.toc li { counter-increment: ch; font-size: 14px; }
+nav.toc li::before { content: counter(ch, upper-roman) ". "; color: var(--muted); font-variant-numeric: tabular-nums; }
+nav.toc a { text-decoration: none; color: var(--ink-2); }
+nav.toc a:hover { color: var(--ink); }
 
-.chart-scroll { overflow-x: auto; }
-.chart { min-width: 900px; }
+/* Chapitres */
+.chapter { display: grid; gap: 22px; padding-top: 28px; border-top: 1px solid var(--line); scroll-margin-top: 16px; }
+.chapter > * { min-width: 0; }
+.chapter .num { color: var(--red); font-size: 13px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; }
+.chapter h2 { margin: 6px 0 0; font-size: clamp(26px, 3.4vw, 36px); line-height: 1.12; font-weight: 600; letter-spacing: -0.015em; text-wrap: balance; max-width: 24ch; }
+h3 { margin-block: 6px -4px; font-size: 19px; font-weight: 600; line-height: 1.3; }
+
+/* Graphiques */
+.fig { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 18px 18px 14px; display: grid; gap: 10px; }
+.fig > * { min-width: 0; }
+.fig h4 { margin: 0; font-size: 17px; font-weight: 600; line-height: 1.3; text-wrap: balance; }
+.fig .sub { margin: 0; color: var(--ink-2); font-size: 13.5px; line-height: 1.45; }
+.fig .src { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.45; border-top: 1px solid var(--line); padding-top: 9px; }
+.figs { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(460px, 100%), 1fr)); gap: 16px; }
 .chart svg { display: block; width: 100%; height: auto; }
-.node-label { fill: var(--ink); font-size: 13px; font-weight: 500; paint-order: stroke; stroke: var(--bg); stroke-width: 4px; stroke-linejoin: round; pointer-events: none; }
-.node-label .val { font-weight: 600; font-variant-numeric: tabular-nums; }
-.node-label .note { fill: var(--muted); font-size: 11.5px; font-weight: 400; }
-.link { fill: none; mix-blend-mode: screen; transition: stroke-opacity .12s; cursor: pointer; }
-.node rect { cursor: pointer; }
-.hint { color: var(--muted); font-size: 13px; margin: 0; }
-.lexique dl { margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(330px, 100%), 1fr)); gap: 16px 32px; }
-.lexique dt { font-weight: 600; display: flex; align-items: center; gap: 8px; }
-.lexique dt i { width: 10px; height: 10px; border-radius: 2px; flex: none; }
-.lexique dd { margin: 4px 0 0; color: var(--ink-2); line-height: 1.5; font-size: 14.5px; }
+.chart text { font-family: var(--sans); }
+.scroll { overflow-x: auto; }
+.scroll > .chart { min-width: 760px; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 14px; color: var(--ink-2); font-size: 12.5px; }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.legend i { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+.legend i.dash { height: 0; width: 14px; border-radius: 0; background: none !important; border-top: 2px dashed var(--ink-2); }
+.legend i.band { opacity: .4; }
 
-#tip {
-  position: fixed; z-index: 10; pointer-events: none;
-  background: #ffffff; color: #11141b;
-  border-radius: 8px; padding: 10px 12px;
-  font-size: 13.5px; line-height: 1.45; max-width: 320px;
-  box-shadow: 0 10px 30px rgba(0,0,0,.45);
-  font-variant-numeric: tabular-nums;
-}
-#tip b { display: block; font-size: 14.5px; font-weight: 600; margin-bottom: 2px; }
-#tip .amt { font-size: 20px; font-weight: 600; }
+.callout { border-left: 3px solid var(--amber); padding: 4px 0 4px 16px; }
+.callout p { margin: 0; color: var(--ink-2); font-size: 15px; line-height: 1.6; }
+.callout b { color: var(--ink); font-weight: 600; }
+blockquote { margin-block: 0; padding: 4px 0 4px 20px; border-left: 3px solid var(--red); font-family: var(--serif); font-style: italic; font-size: 19px; line-height: 1.6; color: var(--ink); }
+blockquote cite { display: block; margin-top: 8px; font-style: normal; font-family: var(--sans); font-size: 13px; color: var(--muted); }
+
+.timeline { list-style: none; margin-block: 0; padding: 0; display: grid; gap: 0; }
+.timeline li { display: grid; grid-template-columns: 92px 1fr; gap: 16px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+.timeline .y { font-weight: 600; font-variant-numeric: tabular-nums; color: var(--orange); }
+.timeline .t { color: var(--ink-2); line-height: 1.5; font-size: 15px; }
+.timeline .t b { color: var(--ink); font-weight: 600; }
+
+.options { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); gap: 14px; }
+.opt { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; }
+.opt .tag { font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.opt h4 { margin: 6px 0 8px; font-size: 17px; font-weight: 600; }
+.opt ul { margin: 0; padding-left: 18px; color: var(--ink-2); font-size: 14.5px; line-height: 1.55; display: grid; gap: 4px; }
+
+.annex { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 20px; display: grid; gap: 14px; }
+.annex h2 { margin: 0; font-size: 20px; font-weight: 600; }
+.annex h3 { margin: 4px 0 0; font-size: 15px; }
+.annex ul { margin: 0; padding-left: 20px; color: var(--ink-2); font-size: 14px; line-height: 1.6; display: grid; gap: 4px; }
+
+#tip { position: fixed; z-index: 10; pointer-events: none; background: #ffffff; color: #11141b; border-radius: 8px; padding: 9px 11px; font-size: 13px; line-height: 1.45; max-width: 300px; box-shadow: 0 10px 30px rgba(0,0,0,.45); font-variant-numeric: tabular-nums; }
+#tip b { display: block; font-weight: 600; margin-bottom: 2px; }
+#tip .amt { font-size: 18px; font-weight: 600; }
 #tip .d { color: #5a6272; }
-#tip .def { display: block; margin-top: 6px; padding-top: 6px; border-top: 1px solid #e3e6ec; color: #3d4452; font-size: 13px; }
-
-section h2 { margin: 0 0 10px; font-size: 19px; font-weight: 600; }
-.table-scroll { overflow-x: auto; }
-table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; min-width: 560px; font-size: 14.5px; }
-th, td { padding: 9px 10px; border-bottom: 1px solid var(--line); text-align: right; }
-th:first-child, td:first-child { text-align: left; }
-thead th { color: var(--muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: .06em; }
-td.red { color: var(--c-noncouvert); font-weight: 700; }
-tfoot td { font-weight: 700; border-top: 2px solid var(--ink-2); border-bottom: 0; }
-.method { color: var(--ink-2); line-height: 1.6; max-width: 84ch; display: grid; gap: 10px; font-size: 14.5px; }
-.method p { margin: 0; }
-.method strong { color: var(--ink); }
-.method h3 { margin: 8px 0 0; font-size: 16px; font-weight: 600; color: var(--ink); }
-.sources { margin: 0; padding-left: 20px; display: grid; gap: 8px; color: var(--ink-2); font-size: 14px; line-height: 1.6; }
-.sources a { color: var(--ink); text-decoration: underline; text-decoration-color: var(--muted); text-underline-offset: 2px; }
-.sources a:hover { text-decoration-color: var(--ink); }
+#tip .row { display: flex; justify-content: space-between; gap: 14px; }
+#tip .row i { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 6px; }
 :focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 </style>
 </head>
 <body>
-<div class="wrap">
+
+<main class="page">
   <header>
-    <h1>Retraites : 137 milliards d'euros de dépenses non couvertes par les cotisations, soit un tiers du total</h1>
-    <p class="sub">Qui finance les 419 Md€ de dépenses de retraite ? De gauche à droite : les sources de financement, les quatre familles de régimes, la part couverte ou non par les cotisations, puis les dépenses. 2025, en milliards d'euros.</p>
+    <div class="kicker">Dossier · Finances publiques et générations</div>
+    <h1>Les retraites françaises&nbsp;: le grand renversement</h1>
+    <p class="lede">En une génération, les retraités sont passés de la catégorie la plus pauvre du pays à la mieux dotée en patrimoine. Ce dossier chiffre ce que coûtent réellement les retraites, qui les paie, et pourquoi le contrat entre générations ne tient plus.</p>
   </header>
 
-  <div class="kpi" id="kpi"></div>
-
-  <div class="legend" id="legend"></div>
-
-  <div class="chart-scroll">
-    <div class="chart" id="chart" role="img" aria-label="Diagramme de flux des sources de financement des retraites vers les dépenses de retraite"></div>
-  </div>
-  <p class="hint">Survolez ou touchez un flux ou une barre pour voir le montant en milliards d'euros et, pour les termes techniques, leur définition.</p>
-
-  <section class="lexique">
-    <h2>Lexique</h2>
-    <dl id="lexique"></dl>
+  <section class="figures" aria-label="Chiffres clés">
+    <div><b>422 Md€</b><span>de pensions chaque année, soit un quart de la dépense publique.</span></div>
+    <div><b class="red">137 Md€</b><span>de pensions non couverts par les cotisations, selon la méthode du « déficit réel ».</span></div>
+    <div><b>36 → 118</b><span>patrimoine médian des plus de 70 ans entre 1986 et 2021, pour 100 chez les 50-59 ans.</span></div>
+    <div><b>4 → 1,7</b><span>cotisants pour un retraité, de 1960 à aujourd'hui.</span></div>
   </section>
 
-  <section>
-    <h2>Par famille de régimes</h2>
-    <div class="table-scroll">
-      <table>
-        <thead><tr><th>Régimes</th><th>Dépenses</th><th>Couvert par les cotisations</th><th>Non couvert</th><th>Part non couverte</th></tr></thead>
-        <tbody id="regimes"></tbody>
-        <tfoot id="regimesTotal"></tfoot>
-      </table>
+  <nav class="toc" aria-label="Sommaire">
+    <ol>
+      <li><a href="#depenses">Un État qui dépense plus que tous</a></li>
+      <li><a href="#renversement">Le grand renversement</a></li>
+      <li><a href="#cout">Le coût réel des retraites</a></li>
+      <li><a href="#generations">Le poids sur les générations suivantes</a></li>
+      <li><a href="#contrat">Un contrat social rompu</a></li>
+      <li><a href="#pistes">Les pistes</a></li>
+    </ol>
+  </nav>
+
+  <!-- I -->
+  <section class="chapter" id="depenses">
+    <div><div class="num">Chapitre I</div><h2>Un État qui dépense plus que tous ses voisins</h2></div>
+    <div class="prose">
+      <p>La France est le pays de l'OCDE où la dépense publique pèse le plus lourd : <strong>57,3 % du PIB en 2025</strong>, soit environ <strong>1 700 milliards d'euros</strong> par an. Pour la financer, elle prélève aussi plus que ses voisins, et emprunte le reste.</p>
+      <p>En 2025, le déficit public atteint encore <strong>5,1 % du PIB</strong>, soit 152,5 milliards d'euros. La dette, elle, ne cesse de monter : <strong>3 595,5 milliards d'euros fin juin 2026, soit 119 % du PIB</strong>, un record depuis le début de la série de l'Insee en 1978. Elle a gagné près de 60 milliards en un seul trimestre.</p>
+      <p>Le premier poste de cette dépense, de loin, ce sont les retraites. Comprendre leur poids réel, c'est comprendre l'essentiel du problème budgétaire français.</p>
     </div>
   </section>
 
-  <section class="method">
-    <h2>Méthode</h2>
-    <p><strong>Lecture.</strong> La colonne de gauche regroupe les financements de même nature d'un régime à l'autre ; le détail par régime apparaît au survol.</p>
-    <p><strong>Lien avec la répartition Insee.</strong> Les dépenses de retraite atteignent ici 418,7 Md€, contre environ 422,5 Md€ dans la répartition Insee des dépenses publiques (253 € sur 1&nbsp;000). L'écart de 3,8 Md€ tient à l'année et au périmètre retenus. Les surcotisations des employeurs publics (46,3 Md€) sont une partie des cotisations retraite déjà repérées dans les budgets des ministères.</p>
+  <!-- II -->
+  <section class="chapter" id="renversement">
+    <div><div class="num">Chapitre II</div><h2>Le grand renversement&nbsp;: des retraités pauvres aux retraités dotés</h2></div>
+    <div class="prose">
+      <p>Il y a cinquante ans, être vieux en France, c'était souvent être pauvre. En 1970, <strong>35 % des 65 ans et plus</strong> vivaient sous le seuil de pauvreté, et le niveau de vie des retraités ne valait que <strong>70 %</strong> de celui de l'ensemble de la population.</p>
+      <p>Le rattrapage a été rapide. Au milieu des années 1990, les retraités ont rejoint la moyenne ; depuis 2005, ils sont moins pauvres que le reste de la population. C'est un succès social. Mais le mouvement ne s'est pas arrêté à l'équilibre.</p>
+    </div>
+
+    <figure class="fig">
+      <h4>Le niveau de vie des retraités a rejoint celui de la population il y a 30 ans</h4>
+      <p class="sub">Niveau de vie moyen des retraités, en % de celui de l'ensemble de la population. Observé de 1970 à 2023, projeté jusqu'en 2070.</p>
+      <div class="legend" id="l-ndv"></div>
+      <div class="scroll"><div class="chart" id="c-ndv"></div></div>
+      <p class="src">Source : Conseil d'orientation des retraites (colloque 2022, rapports 2023 et 2025, séance de février 2026). Entre 1970 et 1996, seules les deux extrémités sont connues.</p>
+    </figure>
+
+    <div class="prose">
+      <p>C'est en patrimoine que le renversement est le plus net. En 1986, le patrimoine médian des plus de 70 ans ne valait qu'un tiers de celui des quinquagénaires. En 2021, il le dépasse. Dans le même temps, la position des 30-39 ans s'est effondrée.</p>
+    </div>
+
+    <div class="figs">
+      <figure class="fig">
+        <h4>Les plus de 70 ans ont dépassé les quinquagénaires</h4>
+        <p class="sub">Patrimoine net médian selon l'âge (base 100 = 50-59 ans)</p>
+        <div class="legend" id="l-median"></div>
+        <div class="chart" id="c-median"></div>
+        <p class="src">Source : Haut-commissariat à la Stratégie et au Plan, « Jeunesse d'hier et d'aujourd'hui : le grand déclassement ? », octobre 2025.</p>
+      </figure>
+      <figure class="fig">
+        <h4>Les ménages les plus âgés sont aussi les plus riches</h4>
+        <p class="sub">Patrimoine net moyen selon l'âge de la personne de référence, début 2021</p>
+        <div class="legend" id="l-patri"></div>
+        <div class="chart" id="c-patri"></div>
+        <p class="src">Source : Insee, Histoire de vie et Patrimoine 2020-2021. Totaux Insee ; répartition par type estimée d'après le graphique des Échos.</p>
+      </figure>
+    </div>
+
+    <div class="prose">
+      <p>Ce patrimoine continue de croître, parce que les plus âgés épargnent beaucoup : <strong>25 % de leur revenu</strong> à partir de 70 ans, contre 8 % chez les moins de 30 ans. L'épargne suit le revenu et l'âge : ce sont les ménages aisés et âgés qui mettent de côté.</p>
+    </div>
+
+    <figure class="fig">
+      <h4>Les plus aisés et les plus âgés épargnent le plus</h4>
+      <p class="sub">Taux d'épargne des ménages, en % du revenu disponible brut, 2017</p>
+      <div class="scroll"><div class="chart" id="c-epargne"></div></div>
+      <p class="src">Source : Insee, comptes nationaux distributionnels (Insee Première n° 1815), repris par La Lettre Éco de Philippe Crevel et Les Échos.</p>
+    </figure>
+
+    <div class="callout"><p><b>Une précision qui renforce l'argument.</b> En revenu, les retraités ne sont pas plus riches que les actifs : ils sont au niveau de l'ensemble de la population, et les actifs restent devant d'environ 12 % selon le COR. Leur avantage tient au patrimoine, accumulé dans une période favorable, et c'est précisément ce que les générations suivantes ne pourront pas reproduire.</p></div>
+  </section>
+
+  <!-- III -->
+  <section class="chapter" id="cout">
+    <div><div class="num">Chapitre III</div><h2>Le coût réel des retraites</h2></div>
+    <div class="prose">
+      <p>Sur 1&nbsp;000 € de dépense publique, l'Insee compte <strong>253 € de retraites</strong> : environ 422 milliards d'euros par an, un quart de la dépense. C'est de très loin la première prestation sociale. Les retraites pèsent plus de onze fois l'assurance chômage et plus de trente fois le RSA ; les sept prestations du graphique ci-dessous réunies n'en représentent qu'un cinquième.</p>
+    </div>
+
+    <figure class="fig">
+      <h4>Les retraites pèsent plus que toutes les autres prestations réunies</h4>
+      <p class="sub">Montant annuel des principales prestations versées en argent, en milliards d'euros (dernière année connue)</p>
+      <div class="scroll"><div class="chart" id="c-presta"></div></div>
+      <p class="src">Sources : Insee (retraites, 2025 : 253 € sur 1&nbsp;000 € de dépense publique) ; Unédic (allocations chômage, prévision 2025) ; Drees (arrêts maladie des salariés, 2024) ; Cnaf (RSA d'avril 2024 à mars 2025, allocations familiales 2024) ; loi de finances 2025 (AME). AAH : valeur du graphique d'origine, non retrouvée dans une source officielle. Allocation de rentrée scolaire : estimation (5 millions d'enfants × environ 440 €). Hors dépenses de santé remboursées, aides au logement et prime d'activité.</p>
+    </figure>
+
+    <div class="prose">
+      <p>Et ce chiffre de 422 milliards ne dit pas tout, car une partie du coût des retraites se cache ailleurs.</p>
+    </div>
+
+    <h3>Les surcotisations, cachées dans les budgets des ministères</h3>
+    <div class="prose">
+      <p>Les cotisations des fonctionnaires actifs ne suffisent pas à payer les pensions des fonctionnaires retraités. Pour combler l'écart, l'État verse à son propre régime de retraite une cotisation d'employeur hors norme : <strong>78 % du traitement pour un fonctionnaire civil, 126 % pour un militaire</strong>, contre environ 25 % pour un employeur privé.</p>
+      <p>Cette cotisation est inscrite dans le budget de chaque ministère. Le PLF 2027 la rend visible : sur les 305,6 milliards d'euros des ministères concernés, <strong>60,3 milliards partent aux retraites</strong>. Sur les 90,9 milliards de l'Enseignement scolaire, 28,7 milliards ne paient ni professeurs ni écoles : ils paient des pensions.</p>
+    </div>
+
+    <figure class="fig">
+      <h4>Un cinquième des crédits des ministères employeurs finance des retraites</h4>
+      <p class="sub">Crédits 2027 par mission, en milliards d'euros, et part versée au régime de retraite de l'État</p>
+      <div class="legend" id="l-min"></div>
+      <div class="scroll"><div class="chart" id="c-min"></div></div>
+      <p class="src">Source : projet de loi de finances 2027. Cotisations employeur et salariales comprises.</p>
+    </figure>
+
+    <h3>Un double comptage dans les comptes publics</h3>
+    <div class="prose">
+      <p>Ces sommes apparaissent deux fois dans la dépense publique : une première fois dans le budget du ministère, une seconde fois dans les pensions versées par le régime de retraite. Le célèbre « 1&nbsp;000 € de dépenses publiques » de l'Insee additionne les deux.</p>
+      <p>Une fois le double comptage retiré, environ <strong>36 €</strong> disparaissent. L'Éducation ne pèse plus 88 € mais 68 € ; la Sécurité 19 € au lieu de 25 €. Les retraites représentent alors <strong>26 %</strong> de la dépense réelle, et non 25 %. Les budgets des ministères, eux, sont plus maigres qu'il n'y paraît.</p>
+    </div>
+
+    <figure class="fig">
+      <h4>Répartition de 1&nbsp;000 € de dépenses publiques, sans double comptage</h4>
+      <p class="sub">En euros sur 1&nbsp;000 € comptés par l'Insee ; chaque case affiche « valeur Insee − part retraites de l'État »</p>
+      <div class="scroll"><div class="chart" id="c-tree"></div></div>
+      <p class="src">Sources : Insee (répartition par fonction), PLF 2027 (part retraites par mission). Rattachement des missions aux fonctions Insee : estimation.</p>
+    </figure>
+
+    <h3>Qui paie vraiment les 419 milliards de pensions ?</h3>
+    <div class="prose">
+      <p>Si l'on ne compte comme « cotisation » que ce qui correspond à un taux de droit commun, salariés, indépendants et employeurs au taux du privé, les cotisations couvrent <strong>282 milliards d'euros</strong>. Les <strong>137 milliards</strong> restants viennent d'ailleurs : surcotisations publiques, CSG, impôts affectés, exonérations remboursées par l'État, transferts des caisses famille et chômage, et emprunt.</p>
+      <p>Le Conseil d'orientation des retraites, qui retient une autre convention, n'affiche qu'un déficit de quelques milliards. Les deux chiffres ne se contredisent pas : ils répondent à deux questions différentes. Le COR demande si les caisses sont à l'équilibre ; le chiffre de 137 milliards dit combien les retraites prélèvent sur le reste de l'économie pour y parvenir.</p>
+    </div>
+
+    <figure class="fig">
+      <h4>Un tiers des pensions n'est pas payé par des cotisations</h4>
+      <p class="sub">Sources de financement des retraites, par famille de régimes, 2025, en milliards d'euros</p>
+      <div class="legend" id="l-sankey"></div>
+      <div class="scroll"><div class="chart" id="c-sankey" style="min-width:900px"></div></div>
+      <p class="src">Sources : décompositions 2025 par famille de régimes (base du privé, complémentaires, fonctionnaires, régimes spéciaux), @larroumecj sur X. Convention « couvert / non couvert » de ces documents.</p>
+      <p class="src"><a href="financement.html">Ouvrir le schéma en grand, avec le lexique des termes techniques →</a></p>
+    </figure>
+
+    <div class="callout"><p><b>Et ce n'est pas tout.</b> S'ajoutent des dépenses qui bénéficient surtout aux personnes âgées sans être comptées comme des retraites : une large part des dépenses de santé, l'allocation personnalisée d'autonomie, l'aide sociale à l'hébergement en Ehpad. Elles ne sont pas chiffrées ici, faute de source qui les isole proprement.</p></div>
+  </section>
+
+  <!-- IV -->
+  <section class="chapter" id="generations">
+    <div><div class="num">Chapitre IV</div><h2>Le poids sur les générations suivantes</h2></div>
+    <div class="prose">
+      <p>Le système par répartition repose sur un ratio simple : combien d'actifs paient pour chaque retraité. Il était de <strong>4 pour 1 en 1960</strong>. Il est de <strong>1,7 pour 1</strong> aujourd'hui. Avec une fécondité tombée à <strong>1,62 enfant par femme</strong> en 2024, loin du seuil de renouvellement de 2,1, il continuera de baisser.</p>
+      <p>Chaque actif porte donc une part croissante de retraité, en cotisations, en impôts affectés, et en dette. Une étude d'Hexagone estime qu'environ la moitié de la dette publique contractée entre 2014 et 2024 est liée aux retraites. L'estimation est discutée, mais l'ordre de grandeur rappelle que l'emprunt finance aussi des pensions.</p>
+    </div>
+
+    <h3>« J'ai cotisé, c'est mon tour »</h3>
+    <div class="prose">
+      <p>Dans un système par répartition stable, chaque génération récupère ce qu'elle a cotisé, augmenté de la croissance de la masse salariale. Avec 1,6 % de croissance par an sur les trente ans qui séparent l'euro moyen cotisé de l'euro moyen perçu, cela fait <strong>1,6 fois la mise</strong>.</p>
+      <p>Les générations nées vers 1960 devraient récupérer environ <strong>deux fois</strong> leurs cotisations ; celles nées en 2000, environ <strong>1,2 fois</strong>. Si le rendement était ramené à 1,6, les pensions seraient d'environ 320 milliards au lieu de 400 : <strong>80 milliards de moins par an</strong>, selon ce calcul simplifié.</p>
+      <p>Les petites retraites ne sont pas le cœur du sujet. Les protéger coûte peu au regard des masses en jeu : le levier est dans les pensions moyennes et élevées, dans la durée de versement et dans l'indexation.</p>
+    </div>
+
+    <h3>Un héritage qui arrive trop tard</h3>
+    <div class="prose">
+      <p>Le patrimoine accumulé par les plus âgés va être transmis : 5&nbsp;000 à 7&nbsp;000 milliards d'euros d'ici 2050 selon Les Échos, davantage selon la Banque de France. Mais l'âge moyen auquel on hérite est passé de <strong>43 ans au début des années 1980 à 52 ans</strong> vers 2020. On hérite désormais quand sa carrière est faite et son logement acheté. L'héritage ne corrige plus l'écart entre générations : il le prolonge.</p>
+    </div>
+
+    <figure class="fig">
+      <h4>La pauvreté des plus âgés a été divisée par trois</h4>
+      <p class="sub">Taux de pauvreté des 65 ans et plus, en % (seuil à 60 % du niveau de vie médian)</p>
+      <div class="scroll"><div class="chart" id="c-pauv"></div></div>
+      <p class="src">Sources : Retraite et société (Cnav) pour 1970 et 2006 ; Insee pour 2022. Entre 1970 et 2006, seules les deux extrémités sont connues.</p>
+    </figure>
+
+    <div class="prose">
+      <p>Le plus dur est la suite. Le COR projette qu'en 2070 le niveau de vie des retraités retombera entre <strong>75 % et 88 %</strong> de celui de l'ensemble de la population. Les actifs d'aujourd'hui financent un niveau de pension qu'ils ne connaîtront pas eux-mêmes.</p>
+    </div>
+  </section>
+
+  <!-- V -->
+  <section class="chapter" id="contrat">
+    <div><div class="num">Chapitre V</div><h2>Un contrat social rompu, un problème connu depuis 35 ans</h2></div>
+    <div class="prose">
+      <p>Un contrat entre générations n'a de légitimité que si chacune aurait accepté de le signer à la place des autres. Les générations parties à la retraite n'auraient pas accepté de récupérer 1,2 fois leurs cotisations pendant que d'autres en récupèrent deux. C'est pourtant ce qu'elles laissent à leurs successeurs.</p>
+    </div>
+    <blockquote>[Si les générations retraitées] n'ont pas réussi à respecter ce principe et ont, au contraire, laissé le conflit d'intérêts guider leurs décisions collectives, les nouvelles générations sont légitimement fondées à ne pas se sentir engagées par des promesses qu'elles n'ont jamais faites. Et ceci n'est pas une critique d'une génération en particulier.<cite>@sc_cath, sur X</cite></blockquote>
+    <div class="prose">
+      <p>Le problème n'a rien de nouveau. Il était décrit, chiffré, et assorti de solutions dès le début des années 1990.</p>
+    </div>
+    <ol class="timeline">
+      <li><span class="y">1991</span><span class="t"><b>Livre blanc sur les retraites (rapport Rocard).</b> Il prévoit le passage de 4 cotisants pour un retraité à 1,5 en 2040, et propose déjà d'allonger la durée de cotisation à 42 ans et de calculer les pensions sur les 25 meilleures années.</span></li>
+      <li><span class="y">1993</span><span class="t"><b>Réforme Balladur.</b> 40 ans de cotisation et 25 meilleures années dans le privé, pensions indexées sur les prix.</span></li>
+      <li><span class="y">1999</span><span class="t"><b>Rapport Charpin.</b> Il annonce le choc de l'arrivée des baby-boomers en 2005, dénonce l'écart public-privé et propose un fonds de réserve.</span></li>
+      <li><span class="y">2003</span><span class="t"><b>Réforme Fillon.</b> Alignement de la durée de cotisation des fonctionnaires sur le privé.</span></li>
+      <li><span class="y">2010</span><span class="t"><b>Réforme Woerth.</b> Âge légal porté de 60 à 62 ans.</span></li>
+      <li><span class="y">2014</span><span class="t"><b>Réforme Touraine.</b> Allongement progressif de la durée de cotisation à 43 ans.</span></li>
+      <li><span class="y">2023</span><span class="t"><b>Réforme Borne.</b> Âge légal porté à 64 ans, au prix d'une crise politique majeure.</span></li>
+    </ol>
+    <div class="prose">
+      <p>Il y a eu des réformes, mais chacune est arrivée tard, a été négociée à la baisse et a épargné les générations déjà proches de la retraite. Le poids électoral des plus âgés y est pour beaucoup : les 65-74 ans votent bien plus régulièrement que les moins de 35 ans, et aucun gouvernement n'ignore 17 millions de retraités.</p>
+    </div>
+  </section>
+
+  <!-- VI -->
+  <section class="chapter" id="pistes">
+    <div><div class="num">Chapitre VI</div><h2>Les pistes</h2></div>
+    <div class="options">
+      <div class="opt"><div class="tag">Ajustements</div><h4>Rééquilibrer le système actuel</h4><ul><li>Relever l'âge de départ, vers 67 ans comme chez nos voisins.</li><li>Moduler l'indexation des pensions au-dessus d'un certain montant.</li><li>Revoir les aides ciblées sur les âges élevés quand elles ne dépendent pas des revenus.</li><li>Faciliter la transmission directe aux petits-enfants, pour que l'héritage arrive plus tôt.</li></ul></div>
+      <div class="opt"><div class="tag">Changement de modèle</div><h4>Introduire une part de capitalisation</h4><ul><li>Créer un fonds souverain de retraite, sur le modèle néerlandais ou norvégien.</li><li>S'appuyer sur ce qui existe déjà : RAFP pour les fonctionnaires, Fonds de réserve pour les retraites, caisse des pharmaciens.</li><li>Ces dispositifs pèsent environ 200 milliards : c'est peu à l'échelle du système.</li></ul></div>
+      <div class="opt"><div class="tag">La difficulté</div><h4>Financer la transition</h4><ul><li>Pendant la transition, une génération paie deux fois : les pensions en cours et sa propre épargne.</li><li>Plus on attend, plus la marche est haute.</li><li>Le débat reste ouvert, mais il ne peut plus être repoussé.</li></ul></div>
+    </div>
+  </section>
+
+  <section class="annex" aria-label="Méthode et sources">
+    <h2>Méthode et sources</h2>
+    <h3>Précautions</h3>
+    <ul>
+      <li>Le « déficit réel » de 137 Md€ repose sur une convention : est « couvert » ce que paient les cotisations à un taux de droit commun. Le COR, avec d'autres conventions, aboutit à un déficit bien plus faible.</li>
+      <li>Le retrait du double comptage (36 €) ne concerne que les cotisations de l'État ; les cotisations des collectivités et des hôpitaux à la CNRACL suivent la même logique mais ne sont pas retirées.</li>
+      <li>Le calcul des 80 Md€ (rendement ramené à 1,6) est une estimation simplifiée, non une projection officielle.</li>
+      <li>Les taux d'épargne datent de 2017 ; la répartition du patrimoine par type est estimée.</li>
+    </ul>
     <h3>Sources</h3>
-    <ul class="sources">
-      <li><strong>Montants du schéma</strong> : décompositions 2025 par famille de régimes, en milliards d'euros. « Retraites de base du privé : 67,7 milliards d'euros de déficit réel » (Cnav, régimes agricoles, indépendants, professions libérales) ; « Retraites complémentaires : 8,9 milliards d'euros de déficit réel » (Agirc-Arrco, Ircantec, RAFP, complémentaires des indépendants et des libéraux) ; « Retraites des fonctionnaires : 50,1 milliards d'euros de déficit réel » (fonction publique d'État, territoriale et hospitalière, ouvriers d'État) ; « Régimes spéciaux : 10,2 milliards d'euros de déficit réel » (SNCF, RATP, électricité et gaz, mines, marins, Banque de France, notaires…).</li>
-      <li><strong>Total des dépenses publiques</strong> : Insee, répartition de 1&nbsp;000 € de dépenses publiques par fonction.</li>
-      <li><strong>Lexique</strong> :
-        <a href="https://www.senat.fr/rap/a25-747/a25-7471.html">Sénat, dette sociale portée par l'Urssaf (Acoss)</a> ·
-        <a href="https://www.cor-retraites.fr/sites/default/files/2019-06/doc-4315.pdf">COR, emprunts des régimes</a> ·
-        <a href="https://banquedesterritoires.fr/sites/default/files/ra/Le%20bilan%20des%20exon%C3%A9rations%202010%2C%20dans%20le%20n%C2%B0138%20d%27%22Acosstat%22%20%28novembre%202011%29.%20.pdf">Acoss, bilan des exonérations</a> ·
-        <a href="https://www.unedic.org/actualites/signature-dune-nouvelle-convention-financiere-entre-lunedic-et-lagirc">Unédic, convention avec l'Agirc-Arrco</a> ·
-        <a href="https://www.senat.fr/rap/l18-147-324/l18-147-3244.html">Sénat, subventions aux régimes spéciaux</a> ·
-        <a href="https://www.lafinancepourtous.com/decryptages/finance-perso/revenus-et-fiscalite/csg/">La finance pour tous, CSG</a> ·
-        <a href="https://www.caf.fr/sites/default/files/medias/cnaf/Nous_connaitre/Recherche_et_statistiques/Essentiel/34_2005_Avantages_familiaux_de_la_retraite_CNAF.pdf">Cnaf, avantages familiaux de retraite</a> ·
-        <a href="https://cor-retraites.fr/sites/default/files/2024-07/Fiche_AGIRC_ARRCO_vf.pdf">COR, fiche Agirc-Arrco</a> ·
-        <a href="https://www.previssima.fr/actualite/pas-de-hausse-avant-lautomne-lagirc-arrco-privilegie-ses-91-milliards-de-reserves.html">Previssima, réserves de l'Agirc-Arrco</a></li>
+    <ul>
+      <li>Insee : <a href="https://www.insee.fr/fr/statistiques/9053525">dette publique fin du 2e trimestre 2026 (Informations rapides n° 239)</a>, <a href="https://www.insee.fr/fr/statistiques/8956575">déficit et dette 2025</a>, <a href="https://www.insee.fr/fr/statistiques/8997691">compte des administrations publiques 2025</a>.</li>
+      <li>Prestations sociales : <a href="https://www.ifrap.org/budget-et-fiscalite/dou-vient-lexcedent-potentiel-de-lassurance-chomage-estime-par-le-gouvernement">Unédic via l'Ifrap (chômage)</a>, <a href="https://caf.fr/sites/default/files/medias/cnaf/Nous_connaitre/Recherche_et_statistiques/Rsa%20Conjoncture/RSA%20Conjoncture_2025T1_OK.pdf">Cnaf, RSA conjoncture</a>, <a href="https://caf.fr/sites/default/files/medias/cnaf/Nous_connaitre/Recherche_et_statistiques/Analyses_statistiques/CNAF_n%C2%B07_Analyses_statistiques.pdf">Cnaf, prestations familiales</a>, <a href="https://www.caf.fr/professionnels/presse/publications/allocation-de-rentree-scolaire-2025-un-coup-de-pouce-pour-bien-preparer-la-rentree">Caf, allocation de rentrée scolaire</a>, <a href="https://www.publicsenat.fr/actualites/politique/aide-medicale-detat-deputes-et-senateurs-trouvent-un-compromis-sur-une-baisse-de-111-millions">Public Sénat, AME 2025</a>.</li>
+      <li>Insee : <a href="https://www.insee.fr/fr/statistiques/6689022">patrimoine des ménages (Insee Focus n° 287)</a>, <a href="https://www.insee.fr/fr/statistiques/4764600">épargne par quintile (Insee Première n° 1815)</a>, <a href="https://www.insee.fr/fr/statistiques/5371219?sommaire=5371304">pauvreté depuis 1970</a>.</li>
+      <li>COR : <a href="https://www.cor-retraites.fr/node/600">colloque 2022</a>, <a href="https://www.cor-retraites.fr/sites/default/files/2024-02/RA_2023_Def.pdf">rapport annuel 2023</a>, <a href="https://www.cor-retraites.fr/sites/default/files/2026-02/Doc_02_Niveau%20vie%20des%20retrait%C3%A9s_SGCOR.pdf">séance de février 2026</a>.</li>
+      <li>HCSP : <a href="https://www.strategie-plan.gouv.fr/publications/jeunesse-dhier-et-daujourdhui-le-grand-declassement">« Jeunesse d'hier et d'aujourd'hui : le grand déclassement ? »</a>, octobre 2025.</li>
+      <li>Projet de loi de finances 2027 ; décompositions 2025 par famille de régimes (@larroumecj, sur X).</li>
+      <li><a href="https://www.cor-retraites.fr/sites/default/files/2019-06/doc-1234.pdf">Retraite et société, pauvreté des personnes âgées</a>.</li>
+      <li>Livre blanc sur les retraites (1991) ; rapport Charpin, « L'avenir de nos retraites » (1999).</li>
+      <li>Citation du chapitre V : @sc_cath, sur X.</li>
+      <li>Les Échos, « Héritages : cette grande transmission qui change le visage de la France » ; Hexagone, dette et retraites 2014-2024 ; Franceinfo, « Vrai ou fake : les baby-boomers touchent-ils deux fois plus que ce qu'ils ont cotisé ? ».</li>
     </ul>
   </section>
-</div>
+</main>
 <div id="tip" hidden></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/d3-sankey@0.12.3/dist/d3-sankey.min.js"></script>
 <script>
 const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
-const fr = x => x.toLocaleString("fr-FR", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
-
-// Catégories de financement (légende et couleurs)
-const CAT = {
-  cot:    { label: "Cotisations", color: css("--c-cot") },
-  res:    { label: "Produits des réserves", color: css("--c-res") },
-  surcot: { label: "Surcotisations", color: css("--c-surcot") },
-  exo:    { label: "Exonérations compensées", color: css("--c-exo") },
-  csg:    { label: "CSG", color: css("--c-csg") },
-  imp:    { label: "Impôts affectés", color: css("--c-imp") },
-  etat:   { label: "État", color: css("--c-etat") },
-  fam:    { label: "Famille, chômage", color: css("--c-fam") },
-  emp:    { label: "Emprunt non financé", color: css("--c-emp") },
-  trans:  { label: "Autres régimes", color: css("--c-trans") },
-  autres: { label: "Autres", color: css("--c-autres") },
+const C = Object.fromEntries(["ink","ink-2","muted","grid","blue","sky","red","orange","amber","violet","slate","wine","card","line"].map(k => [k.replace("-", ""), css("--" + k)]));
+const fr0 = x => x.toLocaleString("fr-FR", { maximumFractionDigits: 0 });
+const fr1 = x => x.toLocaleString("fr-FR", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+const tip = document.getElementById("tip");
+const show = (html, e) => {
+  tip.innerHTML = html; tip.hidden = false;
+  const tw = tip.offsetWidth, th = tip.offsetHeight;
+  tip.style.left = Math.max(8, Math.min(e.clientX + 14, innerWidth - tw - 8)) + "px";
+  tip.style.top = Math.max(8, Math.min(e.clientY + 14, innerHeight - th - 8)) + "px";
 };
+const hide = () => { tip.hidden = true; };
+const svgIn = (id, W, H, label) => d3.select(id).append("svg").attr("viewBox", `0 0 ${W} ${H}`).attr("role", "img").attr("aria-label", label);
+const legend = (id, items) => { document.getElementById(id).innerHTML = items.map(([l, c, cls]) => `<span><i class="${cls || ""}" style="background:${c}"></i>${l}</span>`).join(""); };
+const gridY = (svg, y, ticks, x0, x1, fmt) => {
+  svg.append("g").selectAll("line").data(ticks).join("line").attr("x1", x0).attr("x2", x1).attr("y1", d => y(d)).attr("y2", d => y(d)).attr("stroke", C.grid);
+  svg.append("g").selectAll("text").data(ticks).join("text").attr("x", x0 - 8).attr("y", d => y(d)).attr("dy", "0.35em").attr("text-anchor", "end").attr("fill", C.muted).attr("font-size", 11.5).text(fmt || (d => d));
+};
+const xTicks = (svg, x, ticks, yPos) => svg.append("g").selectAll("text").data(ticks).join("text").attr("x", d => x(d)).attr("y", yPos).attr("text-anchor", "middle").attr("fill", C.muted).attr("font-size", 11.5).text(d => d);
+const hoverDot = (svg, cx, cy, color, html, r = 4) => {
+  svg.append("circle").attr("cx", cx).attr("cy", cy).attr("r", r).attr("fill", color).attr("stroke", C.card).attr("stroke-width", 2);
+  svg.append("circle").attr("cx", cx).attr("cy", cy).attr("r", 13).attr("fill", "transparent").on("pointermove", e => show(html, e)).on("pointerleave", hide);
+};
+const dashed = (svg, pts, color, w = 2.5) => svg.append("path").attr("d", d3.line()(pts)).attr("stroke", color).attr("stroke-width", w).attr("stroke-dasharray", "2 5").attr("stroke-linecap", "round").attr("fill", "none");
 
-// Colonne 1 : sources de financement (Md€, 2025)
-const SOURCES = [
-  { id: "cot_prive", cat: "cot", name: "Cotisations des salariés et indépendants", note: "parts salariale et patronale" },
-  { id: "emp_pub", cat: "cot", name: "Employeurs publics, au taux du privé", note: "25,44 % du traitement" },
-  { id: "cot_fonc", cat: "cot", name: "Cotisations des fonctionnaires", note: "retenue de 11,1 % sur le traitement" },
-  { id: "cot_spe", cat: "cot", name: "Cotisations des régimes spéciaux", note: "y compris produits des réserves" },
-  { id: "reserves", cat: "res", name: "Produits des réserves", note: "placements de l'Agirc-Arrco" },
-  { id: "surcot", cat: "surcot", name: "Surcotisations des employeurs publics", note: "État 78 à 126 %, CNRACL, SNCF, BdF" },
-  { id: "exo", cat: "exo", name: "Exonérations compensées par l'État", note: "allègements de charges remboursés" },
-  { id: "csg", cat: "csg", name: "CSG", note: "trimestres des chômeurs, minimum vieillesse" },
-  { id: "impots", cat: "imp", name: "Impôts et taxes affectés", note: "taxe sur les salaires, C3S, taxe électricité-gaz" },
-  { id: "etat", cat: "etat", name: "Subventions de l'État", note: "régimes spéciaux, ouvriers de l'État" },
-  { id: "famille", cat: "fam", name: "Branche famille", note: "majorations pour enfants, parents au foyer" },
-  { id: "unedic", cat: "fam", name: "Unédic et autres organismes", note: "points accordés aux chômeurs" },
-  { id: "emprunt", cat: "emp", name: "Emprunt de l'Urssaf", note: "déficits Cnav et CNRACL, sans financement prévu" },
-  { id: "transferts", cat: "trans", name: "Versé par d'autres régimes", note: "Cnav, Agirc-Arrco" },
-  { id: "autres", cat: "autres", name: "Autres", note: "" },
-];
-
-// Colonne 2 : familles de régimes ; colonne 3 : couvert / non couvert ; colonne 4 : dépenses
-const REGIMES = [
-  { id: "base", name: "Retraites de base du privé", note: "Cnav, agricoles, indépendants, libéraux", dep: 187.8, couvert: 120.2, non: 67.7 },
-  { id: "compl", name: "Retraites complémentaires", note: "Agirc-Arrco, Ircantec, RAFP…", dep: 117.1, couvert: 108.2, non: 8.9 },
-  { id: "fonc", name: "Retraites des fonctionnaires", note: "État, territoriale, hospitalière", dep: 96.0, couvert: 45.9, non: 50.1 },
-  { id: "spe", name: "Régimes spéciaux", note: "SNCF, RATP, électricité-gaz, mines…", dep: 17.8, couvert: 7.6, non: 10.2 },
-];
-const STATUS = [
-  { id: "couvert", name: "Couvert par les cotisations", color: css("--c-couvert") },
-  { id: "non", name: "Non couvert", color: css("--c-noncouvert") },
-  { id: "reserve", name: "Mis en réserve", color: css("--c-autres"), note: "excédents Agirc-Arrco, RAFP, Banque de France" },
-  { id: "reverse", name: "Reversé à d'autres régimes", color: css("--c-trans"), note: "par la Cnav" },
-];
-const FINAL = { id: "depenses", name: "Dépenses de retraite", note: "pensions versées et frais de gestion" };
-
-// Flux sources → régimes, avec le détail tel qu'il figure dans chaque décomposition
-const FLOWS = [
-  ["cot_prive", "base", 120.2, "Cotisations des actifs, salariés et indépendants"],
-  ["cot_prive", "compl", 105.6, "Agirc-Arrco, indépendants, Ircantec, RAFP"],
-  ["emp_pub", "fonc", 31.5, "Employeurs publics, comme un employeur privé"],
-  ["cot_fonc", "fonc", 14.4, "Retenue de 11,1 % sur le traitement"],
-  ["cot_spe", "spe", 7.7, "Part patronale SNCF au taux de droit commun, produits des réserves"],
-  ["reserves", "compl", 5.7, "Placements des réserves (91 Md€ à l'Agirc-Arrco)"],
-  ["surcot", "fonc", 45.4, "État 78 à 126 %, CNRACL 35 % du traitement"],
-  ["surcot", "spe", 0.9, "SNCF, Banque de France : part patronale au-delà du droit commun"],
-  ["exo", "base", 16.7, "Allègements de charges remboursés par l'État"],
-  ["exo", "compl", 8.3, "Allègements remboursés, dont 0,8 payés par la Cnav"],
-  ["csg", "base", 21.5, "Trimestres des chômeurs, minimum vieillesse (ex-FSV)"],
-  ["impots", "base", 14.9, "Taxe sur les salaires, C3S, forfait social…"],
-  ["impots", "spe", 2.2, "Taxe sur les factures d'électricité et de gaz (CTA)"],
-  ["impots", "compl", 0.6, "Impôts affectés"],
-  ["etat", "spe", 5.8, "Dont 5,0 versés via la Cnav (SNCF, RATP, mines)"],
-  ["etat", "fonc", 1.8, "Surtout ouvriers de l'État (FSPOEIE)"],
-  ["famille", "base", 10.7, "Majorations pour enfants, parents au foyer"],
-  ["unedic", "compl", 5.8, "Points de retraite accordés aux chômeurs"],
-  ["emprunt", "base", 6.0, "Dette à court terme de l'Urssaf (déficit Cnav)"],
-  ["emprunt", "fonc", 2.3, "Déficit CNRACL, territoriaux et hospitaliers"],
-  ["transferts", "spe", 2.0, "Cnav 1,8, Agirc-Arrco 0,2 (adossement IEG, SNCF)"],
-  ["transferts", "fonc", 0.4, "Compensation démographique versée par la Cnav"],
-  ["autres", "base", 0.7, ""],
-  ["autres", "spe", 0.6, ""],
-  ["autres", "fonc", 0.2, ""],
-];
-const OUTS = [
-  ["base", "reverse", 3.1, "Aux régimes spéciaux 1,8, à l'Agirc-Arrco 0,8, à la fonction publique 0,4"],
-  ["compl", "reserve", 8.7, "Excédent et fonds du RAFP"],
-  ["spe", "reserve", 1.3, "Excédents et réserve de la Banque de France"],
-];
-
-// Lexique : définitions courtes, reprises dans les infobulles
-const LEXIQUE = [
-  { id: "compl", term: "Retraites complémentaires", def: "Deuxième pension, qui s'ajoute à la retraite de base. Pour les salariés du privé, c'est l'Agirc-Arrco, gérée par les syndicats et le patronat, qui fonctionne par points. Les contractuels du public ont l'Ircantec, les fonctionnaires le RAFP (sur leurs primes)." },
-  { id: "spe", term: "Régimes spéciaux", def: "Caisses de retraite propres à certaines entreprises ou professions, avec leurs propres règles : SNCF, RATP, électricité et gaz, mines, marins, Banque de France… Ils comptent souvent plus de retraités que d'actifs. La SNCF et la RATP n'y affilient plus les nouveaux embauchés depuis 2020 et 2023." },
-  { id: "csg", term: "CSG", def: "Contribution sociale généralisée. Impôt prélevé sur presque tous les revenus (9,2 % sur les salaires, mais aussi sur les pensions et les revenus du capital) pour financer la Sécurité sociale. Il va surtout à la santé ; une partie paie le minimum vieillesse et les trimestres de retraite des chômeurs." },
-  { id: "famille", term: "Branche famille", def: "Partie de la Sécurité sociale qui verse les prestations familiales (les Caf). Elle paie aussi des droits à la retraite liés aux enfants : cotisations pour les parents qui s'arrêtent de travailler (assurance vieillesse des parents au foyer) et majoration de 10 % pour trois enfants ou plus." },
-  { id: "reserve", term: "Mis en réserve", def: "Argent reçu dans l'année mais pas dépensé, placé de côté. L'Agirc-Arrco doit garder au moins six mois de pensions d'avance ; ses réserves atteignaient 91 Md€ fin 2025." },
-  { id: "exo", term: "Exonérations compensées par l'État", def: "Pour baisser le coût du travail, notamment sur les bas salaires, les employeurs paient moins de cotisations (« allègements généraux »). Depuis une loi de 1994, l'État doit rembourser ce manque à gagner aux caisses, sur son propre budget." },
-  { id: "etat", term: "Subventions de l'État", def: "Argent versé par le budget de l'État pour équilibrer des régimes dont les cotisations ne suffisent pas, surtout les régimes spéciaux (SNCF, RATP, mines…), où il y a parfois un actif pour deux retraités." },
-  { id: "unedic", term: "Unédic", def: "Organisme, géré par les syndicats et le patronat, qui pilote l'assurance chômage. Il verse de l'argent à l'Agirc-Arrco pour que les chômeurs indemnisés continuent d'acquérir des points de retraite complémentaire." },
-  { id: "emprunt", term: "Emprunt de l'Urssaf", def: "L'Urssaf (Acoss) est le trésorier de la Sécurité sociale. Quand une caisse de retraite est en déficit (Cnav pour le privé, CNRACL pour les fonctionnaires territoriaux et hospitaliers), elle emprunte à court terme sur les marchés financiers. Cette dette n'a pas de financement prévu : fin 2025, elle portait 16,6 Md€ de déficits de la branche vieillesse et 12,3 Md€ de la CNRACL." },
-];
-const LEX = Object.fromEntries(LEXIQUE.map(l => [l.id, l]));
-const defHtml = id => LEX[id] ? `<span class="def">${LEX[id].def}</span>` : "";
-
-// Construction du graphe
-const nodes = [
-  ...SOURCES.map(s => ({ ...s, col: 0, color: CAT[s.cat].color })),
-  ...REGIMES.map(r => ({ ...r, col: 1, color: css("--bar") })),
-  ...STATUS.map(s => ({ ...s, col: 2 })),
-  { ...FINAL, col: 3, color: css("--bar") },
-];
-const byId = Object.fromEntries(nodes.map(n => [n.id, n]));
-const links = [];
-for (const [s, t, v, d] of FLOWS) links.push({ source: s, target: t, value: v, detail: d, color: byId[s].color, kind: "src" });
-for (const r of REGIMES) {
-  links.push({ source: r.id, target: "couvert", value: r.couvert, detail: "Part des dépenses payée par les cotisations", color: css("--c-couvert"), kind: "status" });
-  links.push({ source: r.id, target: "non", value: r.non, detail: "Part des dépenses payée par d'autres ressources", color: css("--c-noncouvert"), kind: "status" });
-}
-for (const [s, t, v, d] of OUTS) links.push({ source: s, target: t, value: v, detail: d, color: byId[t].color, kind: "status" });
-const sumBy = (arr, f) => arr.reduce((a, x) => a + f(x), 0);
-const totCouvert = sumBy(REGIMES, r => r.couvert), totNon = sumBy(REGIMES, r => r.non), totDep = sumBy(REGIMES, r => r.dep);
-links.push({ source: "couvert", target: "depenses", value: totCouvert, detail: "Dépenses payées par les cotisations", color: css("--c-couvert"), kind: "final" });
-links.push({ source: "non", target: "depenses", value: totNon, detail: "Dépenses payées par d'autres ressources", color: css("--c-noncouvert"), kind: "final" });
-
-// Carte « non couvert »
+// Niveau de vie relatif des retraités, 1970-2070
 (() => {
-  const share = totNon / (totCouvert + totNon);
-  const r = 22, c = 2 * Math.PI * r;
-  document.getElementById("kpi").innerHTML =
-    `<svg width="56" height="56" viewBox="0 0 56 56" aria-hidden="true">
-       <circle cx="28" cy="28" r="${r}" fill="none" stroke="#2b303c" stroke-width="9"/>
-       <circle cx="28" cy="28" r="${r}" fill="none" stroke="${css("--c-noncouvert")}" stroke-width="9"
-         stroke-dasharray="${c * share} ${c}" transform="rotate(-90 28 28)"/>
-     </svg>
-     <div><div class="big">${Math.round(share * 100)} % non couvert</div>
-     <div class="small">${fr(totNon)} Md€ non couverts sur ${fr(totDep)} Md€ dépensés · ${fr(totCouvert)} Md€ couverts par les cotisations</div></div>`;
+  legend("l-ndv", [["Observé", C.orange], ["Projection 2070, fourchette des scénarios", C.slate, "band"], ["Projection centrale 2025", C.ink2, "dash"]]);
+  const obs = [{ y: 1970, v: 70, s: "COR, colloque 2022" }, { y: 1996, v: 100, s: "parité « au milieu des années 1990 » (COR) ; valeur approchée" }, { y: 2019, v: 101.5, s: "COR, rapport 2023" }, { y: 2022, v: 97, s: "COR, rapport 2025" }, { y: 2023, v: 100.2, s: "COR, février 2026" }];
+  const W = 1000, H = 320, m = { l: 46, r: 150, t: 16, b: 30 };
+  const svg = svgIn("#c-ndv", W, H, "Niveau de vie relatif des retraités, 1970 à 2070");
+  const x = d3.scaleLinear().domain([1970, 2070]).range([m.l, W - m.r]);
+  const y = d3.scaleLinear().domain([60, 110]).range([H - m.b, m.t]);
+  gridY(svg, y, [60, 70, 80, 90, 100, 110], m.l, W - m.r, d => d + " %");
+  xTicks(svg, x, d3.range(1970, 2071, 10), H - 8);
+  svg.append("rect").attr("x", x(2023)).attr("y", m.t).attr("width", x(2070) - x(2023)).attr("height", H - m.t - m.b).attr("fill", "#ffffff").attr("fill-opacity", 0.025);
+  svg.append("text").attr("x", x(2023) + 8).attr("y", m.t + 12).attr("fill", C.muted).attr("font-size", 11.5).text("Projections");
+  svg.append("line").attr("x1", m.l).attr("x2", W - m.r).attr("y1", y(100)).attr("y2", y(100)).attr("stroke", C.muted).attr("stroke-dasharray", "4 4");
+  svg.append("path").attr("d", d3.area().x(d => x(d[0])).y0(d => y(d[1])).y1(d => y(d[2]))([[2023, 100.2, 100.2], [2070, 75.4, 87.7]])).attr("fill", C.slate).attr("fill-opacity", 0.35);
+  svg.append("path").attr("d", d3.line()([[x(2023), y(100.2)], [x(2070), y(87.5)]])).attr("stroke", C.ink2).attr("stroke-width", 1.5).attr("stroke-dasharray", "5 4").attr("fill", "none");
+  dashed(svg, [[x(1970), y(70)], [x(1996), y(100)]], C.orange);
+  svg.append("path").attr("d", d3.line().x(d => x(d.y)).y(d => y(d.v))(obs.slice(1))).attr("stroke", C.orange).attr("stroke-width", 2.5).attr("fill", "none");
+  obs.forEach(d => hoverDot(svg, x(d.y), y(d.v), C.orange, `<b>${d.y}</b><span class="amt">${fr1(d.v)} %</span><br><span class="d">${d.s}</span>`));
+  const lab = (px, py, t, c, a = "start", w = 400) => svg.append("text").attr("x", px).attr("y", py).attr("fill", c).attr("font-size", 12.5).attr("font-weight", w).attr("text-anchor", a).text(t);
+  lab(x(1970) + 10, y(70) + 4, "70 % en 1970", C.ink, "start", 600);
+  lab(x(1996), y(100) - 12, "Parité au milieu des années 1990", C.ink, "middle", 600);
+  lab(x(2070) + 10, y(87.7) - 2, "87,7 %", C.ink2); lab(x(2070) + 10, y(87.5) + 14, "87,5 % (rapport 2025)", C.ink2); lab(x(2070) + 10, y(75.4) + 4, "75,4 %", C.ink2);
 })();
 
-// Légende
-document.getElementById("legend").innerHTML = Object.values(CAT)
-  .map(c => `<span><i style="background:${c.color}"></i>${c.label}</span>`).join("");
-
-// Sankey
-const W = 1180, H = 900, M = { l: 340, r: 190, t: 14, b: 14 };
-const sankey = d3.sankey()
-  .nodeId(d => d.id)
-  .nodeAlign(d => d.col)
-  .nodeWidth(10)
-  .nodePadding(16)
-  .nodeSort(null)
-  .linkSort(null)
-  .extent([[M.l, M.t], [W - M.r, H - M.b]]);
-const graph = sankey({ nodes: nodes.map(d => ({ ...d })), links: links.map(d => ({ ...d })) });
-
-const svg = d3.select("#chart").append("svg").attr("viewBox", `0 0 ${W} ${H}`);
-const linkSel = svg.append("g").selectAll("path").data(graph.links).join("path")
-  .attr("class", "link")
-  .attr("d", d3.sankeyLinkHorizontal())
-  .attr("stroke", d => d.color)
-  .attr("stroke-opacity", 0.42)
-  .attr("stroke-width", d => Math.max(1.5, d.width))
-  .attr("tabindex", 0)
-  .attr("aria-label", d => `${d.source.name} vers ${d.target.name} : ${fr(d.value)} milliards d'euros`);
-
-const nodeSel = svg.append("g").selectAll("g").data(graph.nodes).join("g").attr("class", "node");
-nodeSel.append("rect")
-  .attr("x", d => d.x0).attr("y", d => d.y0)
-  .attr("width", d => d.x1 - d.x0).attr("height", d => Math.max(2, d.y1 - d.y0))
-  .attr("rx", 2)
-  .attr("fill", d => d.color)
-  .attr("tabindex", 0)
-  .attr("aria-label", d => `${d.name} : ${fr(d.value)} milliards d'euros`);
-
-// Étiquettes : à gauche pour les sources, à droite pour les autres colonnes
-const label = nodeSel.append("text").attr("class", "node-label")
-  .attr("x", d => d.col === 0 ? d.x0 - 10 : d.x1 + 10)
-  .attr("y", d => (d.y0 + d.y1) / 2)
-  .attr("text-anchor", d => d.col === 0 ? "end" : "start")
-  .attr("dominant-baseline", "middle");
-label.each(function (d) {
-  const t = d3.select(this);
-  const big = d.y1 - d.y0 > 34;
-  const value = d.col === 1 ? d.dep : d.id === "depenses" ? totDep : d.value;
-  if (d.col === 0) {
-    t.append("tspan").text(d.name + " ");
-    t.append("tspan").attr("class", "val").attr("fill", d.color === css("--c-autres") ? css("--ink-2") : d.color).text(fr(d.value));
-    if (big && d.note) t.append("tspan").attr("class", "note").attr("x", d.x0 - 10).attr("dy", "1.35em").text(d.note);
-    if (big && d.note) t.attr("dy", "-0.6em");
-  } else if (!big && d.col === 2) {
-    t.append("tspan").text(d.name + " ");
-    t.append("tspan").attr("class", "val").text(fr(value));
-  } else {
-    t.append("tspan").text(d.name);
-    t.append("tspan").attr("class", "val").attr("x", d.x1 + 10).attr("dy", "1.3em")
-      .attr("fill", d.id === "non" ? css("--c-noncouvert") : css("--ink"))
-      .text(fr(value) + " Md€" + (d.col === 1 ? " dépensés" : ""));
-    t.attr("dy", "-0.6em");
+// Patrimoine médian selon l'âge
+(() => {
+  const years = [1986, 1992, 2010, 2015, 2021];
+  const S = [
+    { k: "Plus de 70 ans", c: C.red, v: [36, 60, 73, 90, 118], w: 3 },
+    { k: "60-69 ans", c: C.orange, v: [90, 93, 102, 122, 120], w: 2.5 },
+    { k: "50-59 ans", c: C.ink2, v: [100, 100, 100, 100, 100], w: 1.5, dash: true },
+    { k: "40-49 ans", c: C.sky, v: [80, 86, 65, 66, 63], w: 2 },
+    { k: "30-39 ans", c: C.blue, v: [51, 40, 24, 33, 28], w: 2.5 },
+    { k: "Moins de 30 ans", c: C.violet, v: [7, 3, 3, 6, 8], w: 2 },
+  ];
+  legend("l-median", S.map(s => [s.k, s.c, s.dash ? "dash" : ""]));
+  const W = 520, H = 320, m = { l: 34, r: 38, t: 12, b: 28 };
+  const svg = svgIn("#c-median", W, H, "Patrimoine net médian selon l'âge, 1986 à 2021");
+  const x = d3.scaleLinear().domain([1986, 2021]).range([m.l, W - m.r]);
+  const y = d3.scaleLinear().domain([0, 130]).range([H - m.b, m.t]);
+  gridY(svg, y, [0, 25, 50, 75, 100, 125], m.l, W - m.r);
+  xTicks(svg, x, years, H - 8);
+  for (const s of [...S].reverse()) {
+    svg.append("path").attr("d", d3.line().x((d, i) => x(years[i])).y(d => y(d))(s.v)).attr("fill", "none").attr("stroke", s.c).attr("stroke-width", s.w).attr("stroke-dasharray", s.dash ? "5 4" : null);
+    if (!s.dash) svg.append("g").selectAll("circle").data(s.v).join("circle").attr("cx", (d, i) => x(years[i])).attr("cy", d => y(d)).attr("r", 3).attr("fill", s.c).attr("stroke", C.card).attr("stroke-width", 1.5);
   }
-});
+  const ends = S.map(s => ({ s, y: y(s.v[4]) })).sort((a, b) => a.y - b.y);
+  for (let i = 1; i < ends.length; i++) if (ends[i].y - ends[i - 1].y < 13) ends[i].y = ends[i - 1].y + 13;
+  svg.append("g").selectAll("text").data(ends).join("text").attr("x", W - m.r + 7).attr("y", d => d.y).attr("dy", "0.35em").attr("fill", d => d.s.c).attr("font-size", 12).attr("font-weight", 600).text(d => d.s.v[4]);
+  const guide = svg.append("line").attr("y1", m.t).attr("y2", H - m.b).attr("stroke", C.ink2).attr("stroke-opacity", 0);
+  svg.append("rect").attr("x", m.l).attr("y", m.t).attr("width", W - m.l - m.r).attr("height", H - m.t - m.b).attr("fill", "transparent")
+    .on("pointermove", function (e) {
+      const [px] = d3.pointer(e, this);
+      const yr = years.reduce((a, b) => Math.abs(x(b) - px) < Math.abs(x(a) - px) ? b : a), i = years.indexOf(yr);
+      guide.attr("x1", x(yr)).attr("x2", x(yr)).attr("stroke-opacity", .5);
+      show(`<b>${yr}</b>` + S.map(s => `<div class="row"><span><i style="background:${s.c}"></i>${s.k}</span><strong>${s.v[i]}</strong></div>`).join(""), e);
+    })
+    .on("pointerleave", () => { guide.attr("stroke-opacity", 0); hide(); });
+})();
 
-// Infobulle
-const tip = document.getElementById("tip");
-const place = (x, y) => {
-  const tw = tip.offsetWidth, th = tip.offsetHeight;
-  tip.style.left = Math.max(8, Math.min(x + 16, innerWidth - tw - 8)) + "px";
-  tip.style.top = Math.max(8, Math.min(y + 16, innerHeight - th - 8)) + "px";
-};
-const linkTip = d => {
-  let pct = "";
-  if (d.kind === "src") pct = `${Math.round(d.value / d.target.value * 100)} % des ressources du régime`;
-  if (d.kind === "status" && (d.target.id === "couvert" || d.target.id === "non")) pct = `${Math.round(d.value / d.source.dep * 100)} % de ses dépenses`;
-  if (d.kind === "final") pct = `${Math.round(d.value / totDep * 100)} % des dépenses de retraite`;
-  return `<b>${d.source.name} → ${d.target.name}</b><span class="amt">${fr(d.value)} Md€</span>` +
-    (pct ? `<br>${pct}` : "") + (d.detail ? `<br><span class="d">${d.detail}</span>` : "");
-};
-const nodeTip = d => {
-  if (d.col === 1) {
-    return `<b>${d.name}</b><span class="d">${d.note}</span><br>Dépenses : <strong>${fr(d.dep)} Md€</strong>` +
-      `<br>Couvert : ${fr(d.couvert)} Md€<br>Non couvert : <strong>${fr(d.non)} Md€</strong> (${Math.round(d.non / d.dep * 100)} %)` + defHtml(d.id);
+// Retraites et autres prestations sociales
+(() => {
+  const P = [
+    ["Retraites", 422, "Insee, 2025 (253 € sur 1 000 € de dépense publique)", true],
+    ["Allocations chômage", 37.2, "Unédic, prévision 2025"],
+    ["Allocation aux adultes handicapés (AAH)", 13.5, "valeur du graphique d'origine, non vérifiée", false, true],
+    ["Allocations familiales", 13.4, "Cnaf, 2024"],
+    ["Arrêts maladie (salariés)", 12.1, "Drees, 2024"],
+    ["Revenu de solidarité active (RSA)", 12.0, "Cnaf, avril 2024 à mars 2025"],
+    ["Allocation de rentrée scolaire", 2.2, "estimation : 5 millions d'enfants × environ 440 €", false, true],
+    ["Aide médicale de l'État (AME)", 1.2, "loi de finances 2025"],
+  ];
+  const others = P.slice(1).reduce((a, p) => a + p[1], 0);
+  const W = 1000, rowH = 34, m = { l: 270, r: 230, t: 6, b: 26 };
+  const H = m.t + (P.length + 1) * rowH + 10 + m.b;
+  const svg = svgIn("#c-presta", W, H, "Montant des retraites comparé aux autres prestations sociales");
+  const x = d3.scaleLinear().domain([0, 450]).range([m.l, W - m.r]);
+  svg.append("g").selectAll("line").data([0, 100, 200, 300, 400]).join("line").attr("x1", d => x(d)).attr("x2", d => x(d)).attr("y1", m.t).attr("y2", H - m.b).attr("stroke", C.grid);
+  svg.append("g").selectAll("text").data([0, 100, 200, 300, 400]).join("text").attr("x", d => x(d)).attr("y", H - 6).attr("text-anchor", "middle").attr("fill", C.muted).attr("font-size", 11.5).text(d => d + " Md€");
+  const row = (yy, name, v, color, labelColor, valTxt, extra, tipHtml, dash) => {
+    svg.append("text").attr("x", m.l - 12).attr("y", yy + rowH / 2).attr("dy", "0.35em").attr("text-anchor", "end").attr("fill", labelColor).attr("font-size", 13).text(name);
+    const r = svg.append("rect").attr("x", x(0)).attr("y", yy + 7).attr("height", rowH - 14).attr("width", Math.max(2, x(v) - x(0))).attr("fill", color).attr("rx", 2);
+    if (dash) r.attr("fill-opacity", 0.45).attr("stroke", color).attr("stroke-dasharray", "3 2");
+    const t = svg.append("text").attr("x", x(v) + 8).attr("y", yy + rowH / 2).attr("dy", "0.35em").attr("fill", C.ink).attr("font-size", 13).attr("font-weight", 600).text(valTxt);
+    if (extra) t.append("tspan").attr("dx", 8).attr("fill", C.muted).attr("font-weight", 400).text(extra);
+    svg.append("rect").attr("y", yy).attr("width", W).attr("height", rowH).attr("fill", "transparent").on("pointermove", e => show(tipHtml, e)).on("pointerleave", hide);
+  };
+  P.forEach(([n, v, s, main, approx], i) => {
+    const ratio = P[0][1] / v;
+    row(m.t + i * rowH, n, v, main ? C.red : C.blue, main ? C.ink : C.ink2, (approx ? "≈ " : "") + (Number.isInteger(v) ? fr0(v) : fr1(v)) + " Md€", main ? "" : `retraites : ${ratio >= 100 ? fr0(ratio) : fr1(ratio)} fois plus`,
+      `<b>${n}</b><span class="amt">${(approx ? "≈ " : "") + fr1(v)} Md€</span><br><span class="d">${s}</span>` + (main ? "" : `<br>Les retraites pèsent <strong>${fr1(ratio)} fois</strong> plus`), approx);
+  });
+  const yy = m.t + P.length * rowH + 10;
+  svg.append("line").attr("x1", 0).attr("x2", W).attr("y1", yy - 4).attr("y2", yy - 4).attr("stroke", C.line);
+  row(yy, "Les 7 autres prestations réunies", others, C.slate, C.ink, fr1(others) + " Md€", `${Math.round(others / P[0][1] * 100)} % des retraites`,
+    `<b>Les 7 autres prestations réunies</b><span class="amt">${fr1(others)} Md€</span><br>soit ${Math.round(others / P[0][1] * 100)} % du montant des retraites`);
+})();
+
+// Patrimoine moyen par âge
+(() => {
+  const T = [{ k: "Financier", c: C.blue }, { k: "Immobilier", c: C.sky }, { k: "Professionnel", c: C.amber }, { k: "Résiduel", c: C.slate }];
+  legend("l-patri", T.map(t => [t.k, t.c]));
+  const data = [
+    { a: "Moins de 30 ans", tot: 43200, p: [8900, 27900, 0, 6400] }, { a: "30 à 39 ans", tot: 135500, p: [18000, 89900, 18000, 9600] },
+    { a: "40 à 49 ans", tot: 251000, p: [34700, 158500, 41600, 16200] }, { a: "50 à 59 ans", tot: 350400, p: [66200, 215700, 47900, 20600] },
+    { a: "60 à 69 ans", tot: 361400, p: [83500, 226400, 30900, 20600] }, { a: "70 ans ou plus", tot: 343800, p: [97100, 218200, 7900, 20600] },
+  ];
+  const W = 520, H = 320, m = { l: 108, r: 78, t: 6, b: 24 };
+  const svg = svgIn("#c-patri", W, H, "Patrimoine net moyen par âge, début 2021");
+  const x = d3.scaleLinear().domain([0, 400000]).range([m.l, W - m.r]);
+  const y = d3.scaleBand().domain(data.map(d => d.a)).range([m.t, H - m.b]).padding(0.32);
+  svg.append("g").selectAll("line").data(d3.range(0, 400001, 100000)).join("line").attr("x1", d => x(d)).attr("x2", d => x(d)).attr("y1", m.t).attr("y2", H - m.b).attr("stroke", C.grid);
+  svg.append("g").selectAll("text").data(d3.range(0, 400001, 100000)).join("text").attr("x", d => x(d)).attr("y", H - 6).attr("text-anchor", "middle").attr("fill", C.muted).attr("font-size", 11.5).text(d => d ? fr0(d / 1000) + " k€" : "0");
+  const g = svg.append("g").selectAll("g").data(data).join("g").attr("transform", d => `translate(0,${y(d.a)})`);
+  g.each(function (d) {
+    let acc = 0;
+    d.p.forEach((v, i) => { if (!v) return; d3.select(this).append("rect").attr("x", x(acc) + (acc ? 1 : 0)).attr("height", y.bandwidth()).attr("width", Math.max(0, x(acc + v) - x(acc) - (acc ? 1 : 0))).attr("fill", T[i].c).attr("rx", 1.5); acc += v; });
+  });
+  g.append("text").attr("x", m.l - 10).attr("y", y.bandwidth() / 2).attr("dy", "0.35em").attr("text-anchor", "end").attr("fill", C.ink2).attr("font-size", 12.5).text(d => d.a);
+  g.append("text").attr("x", d => x(d.tot) + 8).attr("y", y.bandwidth() / 2).attr("dy", "0.35em").attr("fill", C.ink).attr("font-weight", 600).attr("font-size", 12.5).text(d => fr0(d.tot) + " €");
+  g.append("rect").attr("y", -6).attr("width", W).attr("height", y.bandwidth() + 12).attr("fill", "transparent")
+    .on("pointermove", (e, d) => show(`<b>${d.a}</b><span class="amt">${fr0(d.tot)} €</span><br><span class="d">patrimoine net moyen (Insee)</span>` + T.map((t, i) => `<div class="row"><span><i style="background:${t.c}"></i>${t.k}</span><span>≈ ${fr0(Math.round(d.p[i] / 1000))} k€</span></div>`).join("") + `<span class="d">Répartition estimée</span>`, e))
+    .on("pointerleave", hide);
+})();
+
+// Taux d'épargne
+(() => {
+  const groups = [
+    { t: "Par quintile de revenu", rows: [["20 % les plus modestes", 3], ["2e quintile", 5], ["3e quintile", 10], ["4e quintile", 11], ["20 % les plus aisés", 28]], hi: 4 },
+    { t: "Par tranche d'âge", rows: [["Moins de 30 ans", 8], ["30 à 39 ans", 9], ["40 à 49 ans", 11], ["50 à 59 ans", 18], ["60 à 69 ans", 18], ["70 ans et plus", 25]], hi: 5 },
+  ];
+  const W = 1000, rowH = 24, colW = 480, m = { l: 170, r: 50 };
+  const H = 34 + 6 * rowH + 6;
+  const svg = svgIn("#c-epargne", W, H, "Taux d'épargne par quintile de revenu et par âge");
+  groups.forEach((g, gi) => {
+    const ox = gi * (colW + 40), x = d3.scaleLinear().domain([0, 30]).range([ox + m.l, ox + colW - m.r]);
+    svg.append("text").attr("x", ox).attr("y", 16).attr("fill", C.ink).attr("font-weight", 600).attr("font-size", 13.5).text(g.t);
+    g.rows.forEach((r, i) => {
+      const yy = 34 + i * rowH, hi = i === g.hi;
+      svg.append("text").attr("x", ox + m.l - 10).attr("y", yy + rowH / 2 - 2).attr("dy", "0.35em").attr("text-anchor", "end").attr("fill", hi ? C.ink : C.ink2).attr("font-size", 12.5).text(r[0]);
+      svg.append("rect").attr("x", ox + m.l).attr("y", yy + 3).attr("height", rowH - 9).attr("width", x(r[1]) - ox - m.l).attr("fill", hi ? C.orange : C.blue).attr("rx", 2);
+      svg.append("text").attr("x", x(r[1]) + 7).attr("y", yy + rowH / 2 - 2).attr("dy", "0.35em").attr("fill", C.ink).attr("font-weight", 600).attr("font-size", 12.5).text(r[1] + " %");
+      svg.append("rect").attr("x", ox).attr("y", yy).attr("width", colW).attr("height", rowH).attr("fill", "transparent")
+        .on("pointermove", e => show(`<b>${r[0]}</b><span class="amt">${r[1]} %</span><br><span class="d">du revenu disponible brut épargné, 2017</span>`, e)).on("pointerleave", hide);
+    });
+  });
+})();
+
+// Part des crédits des ministères versée aux retraites
+(() => {
+  legend("l-min", [["Hors retraites", C.blue], ["Versé au régime de retraite de l'État", C.red]]);
+  const M = [["Enseignement scolaire", 90.9, 28.7], ["Défense", 73.2, 9.2], ["Recherche et enseignement supérieur", 32.1, 6.7], ["Sécurités", 26.6, 9.3], ["Écologie et mobilités", 23.4, 0.9], ["Travail et social", 18.9, 0.4], ["Justice", 13.4, 2.8], ["10 autres missions", 27.1, 2.4]];
+  const W = 1000, rowH = 30, m = { l: 230, r: 150, t: 4, b: 24 };
+  const H = m.t + M.length * rowH + m.b;
+  const svg = svgIn("#c-min", W, H, "Crédits 2027 des ministères et part versée aux retraites");
+  const x = d3.scaleLinear().domain([0, 100]).range([m.l, W - m.r]);
+  svg.append("g").selectAll("line").data([0, 25, 50, 75, 100]).join("line").attr("x1", d => x(d)).attr("x2", d => x(d)).attr("y1", m.t).attr("y2", H - m.b).attr("stroke", C.grid);
+  svg.append("g").selectAll("text").data([0, 25, 50, 75, 100]).join("text").attr("x", d => x(d)).attr("y", H - 6).attr("text-anchor", "middle").attr("fill", C.muted).attr("font-size", 11.5).text(d => d + " Md€");
+  M.forEach(([n, tot, ret], i) => {
+    const yy = m.t + i * rowH, pct = Math.round(ret / tot * 100);
+    svg.append("text").attr("x", m.l - 10).attr("y", yy + rowH / 2).attr("dy", "0.35em").attr("text-anchor", "end").attr("fill", C.ink2).attr("font-size", 13).text(n);
+    svg.append("rect").attr("x", x(0)).attr("y", yy + 6).attr("height", rowH - 12).attr("width", x(tot - ret) - x(0)).attr("fill", C.blue).attr("rx", 1.5);
+    svg.append("rect").attr("x", x(tot - ret) + 1).attr("y", yy + 6).attr("height", rowH - 12).attr("width", Math.max(1.5, x(tot) - x(tot - ret) - 1)).attr("fill", C.red).attr("rx", 1.5);
+    svg.append("text").attr("x", x(tot) + 8).attr("y", yy + rowH / 2).attr("dy", "0.35em").attr("fill", C.ink).attr("font-size", 12.5).attr("font-weight", 600).text(`${fr1(tot)} Md€`).append("tspan").attr("fill", pct >= 20 ? C.red : C.muted).attr("dx", 6).text(`${pct} % retraites`);
+    svg.append("rect").attr("y", yy).attr("width", W).attr("height", rowH).attr("fill", "transparent")
+      .on("pointermove", e => show(`<b>${n}</b><span class="amt">${fr1(tot)} Md€</span><br>dont retraites : <strong>${fr1(ret)} Md€</strong> (${pct} %)<br>hors retraites : ${fr1(tot - ret)} Md€`, e)).on("pointerleave", hide);
+  });
+})();
+
+// Répartition de 1 000 € sans double comptage
+(() => {
+  const NAVY = "#1b2441", W = 1000, H = 600;
+  const D = {
+    sante: { n: "Santé", insee: 201, st: 0, bg: "#34418f", fg: "#fff" }, rps: { n: "Autre protection sociale", insee: 107, st: 0.2, bg: "#1d2c6b", fg: "#fff" },
+    retraites: { n: "Retraites", insee: 253, st: 0, bg: "#00b4e4", fg: "#fff" }, defense: { n: "Défense", insee: 31, st: 5.5, bg: "#16b6e6", fg: NAVY },
+    securite: { n: "Sécurité", insee: 25, st: 5.6, bg: "#f5e17e", fg: NAVY }, infra: { n: "Infrastructures", insee: 11, st: 0, bg: "#6a5acd", fg: "#fff" },
+    justice: { n: "Justice", insee: 5, st: 1.7, bg: "#72e6a6", fg: NAVY }, env: { n: "Environnement", insee: 17, st: 0.3, bg: "#f2a6e1", fg: NAVY },
+    dette: { n: "Charge de la dette", insee: 31, st: 0, bg: "#ff7a5a", fg: "#fff" }, recherche: { n: "Recherche", insee: 30, st: 1.6, bg: "#72e6a6", fg: NAVY },
+    culture: { n: "Culture et loisirs", insee: 26, st: 0.2, bg: "#f5e17e", fg: NAVY }, soutien: { n: "Soutien à l'économie", insee: 59, st: 0.4, bg: "#6a5acd", fg: "#fff" },
+    transports: { n: "Transports et équipements", insee: 50, st: 0.3, bg: "#16b6e6", fg: NAVY }, education: { n: "Éducation", insee: 88, st: 19.6, bg: "#f2a6e1", fg: NAVY },
+    fonct: { n: "Administrations", insee: 66, st: 0.9, bg: "#ff7a5a", fg: "#fff" },
+  };
+  for (const k in D) D[k].v = Math.round((D[k].insee - D[k].st) * 10) / 10;
+  const sum = ks => ks.reduce((s, k) => s + D[k].v, 0), TOT = sum(Object.keys(D));
+  const svg = svgIn("#c-tree", W, H, "Répartition de 1 000 euros de dépenses publiques sans double comptage");
+  const rects = [], put = (k, x, y, w, h) => rects.push({ k, x, y, w, h });
+  const ps = ["sante", "rps", "retraites"], L = W * sum(ps) / TOT, topH = H * sum(["sante", "rps"]) / sum(ps), sW = L * D.sante.v / sum(["sante", "rps"]);
+  put("sante", 0, 0, sW, topH); put("rps", sW, 0, L - sW, topH); put("retraites", 0, topH, L, H - topH);
+  const R = W - L, rows = [["defense", "securite", ["infra", "justice", "env"]], ["dette", "recherche", "culture"], ["soutien", "transports"], ["education", "fonct"]];
+  const rowSum = r => r.reduce((s, c) => s + (Array.isArray(c) ? sum(c) : D[c].v), 0), rTot = rows.reduce((s, r) => s + rowSum(r), 0);
+  let yy = 0;
+  for (const r of rows) {
+    const h = H * rowSum(r) / rTot, rs = rowSum(r); let x = L;
+    for (const c of r) {
+      if (Array.isArray(c)) {
+        const cw = R * sum(c) / rs, th = h * sum(["infra", "justice"]) / sum(c), iw = cw * D.infra.v / sum(["infra", "justice"]);
+        put("infra", x, yy, iw, th); put("justice", x + iw, yy, cw - iw, th); put("env", x, yy + th, cw, h - th); x += cw;
+      } else { const w = R * D[c].v / rs; put(c, x, yy, w, h); x += w; }
+    }
+    yy += h;
   }
-  const rows = (d.col === 0 ? d.sourceLinks.map(l => [l.target.name, l.value]) : d.targetLinks.map(l => [l.source.name, l.value]));
-  return `<b>${d.name}</b><span class="amt">${fr(d.id === "depenses" ? totDep : d.value)} Md€</span>` + (d.note ? `<br><span class="d">${d.note}</span>` : "") +
-    (rows.length > 1 ? "<br>" + rows.map(([n, v]) => `${n} : ${fr(v)}`).join("<br>") : "") + defHtml(d.id);
-};
-const highlight = pred => linkSel.attr("stroke-opacity", l => pred(l) ? 0.95 : 0.42).style("filter", l => pred(l) ? "brightness(1.35)" : null);
-const reset = () => { linkSel.attr("stroke-opacity", 0.42).style("filter", null); tip.hidden = true; };
-const showAt = (html, x, y) => { tip.innerHTML = html; tip.hidden = false; place(x, y); };
+  const g = svg.append("g").selectAll("g").data(rects).join("g").attr("transform", r => `translate(${r.x},${r.y})`);
+  g.append("rect").attr("width", r => Math.max(0, r.w - 3)).attr("height", r => Math.max(0, r.h - 3)).attr("fill", r => D[r.k].bg).attr("rx", 2);
+  g.each(function (r) {
+    const d = D[r.k], s = d.v >= 150 ? 20 : d.v >= 50 ? 15 : d.v >= 20 ? 13 : d.v >= 10 ? 10 : 8.5, t = d3.select(this).append("text").attr("fill", d.fg).attr("font-size", s);
+    t.append("tspan").attr("x", 8).attr("y", s + 6).attr("font-weight", 600).text(d.n.length > 18 && d.v < 60 ? d.n.split(" ")[0] : d.n);
+    t.append("tspan").attr("x", 8).attr("dy", "1.2em").text(Math.round(d.v) + " €");
+    if (d.st && d.v >= 20) t.append("tspan").attr("x", 8).attr("dy", "1.35em").attr("font-size", s * 0.72).attr("opacity", .85).text(`${d.insee} − ${fr1(d.st)}`);
+  });
+  g.append("rect").attr("width", r => r.w).attr("height", r => r.h).attr("fill", "transparent")
+    .on("pointermove", (e, r) => { const d = D[r.k]; show(`<b>${d.n}</b>Insee : ${d.insee} €` + (d.st ? `<br>− part retraites de l'État : ${fr1(d.st)} €` : "") + `<br><strong>= ${fr1(d.v)} €</strong>`, e); })
+    .on("pointerleave", hide);
+})();
 
-linkSel
-  .on("pointerenter pointermove", (e, d) => { highlight(l => l === d); showAt(linkTip(d), e.clientX, e.clientY); })
-  .on("pointerleave", reset)
-  .on("focus", function (e, d) { const r = this.getBoundingClientRect(); highlight(l => l === d); showAt(linkTip(d), r.left + r.width / 2, r.top + r.height / 2); })
-  .on("blur", reset);
-nodeSel.select("rect")
-  .on("pointerenter pointermove", (e, d) => { highlight(l => l.source === d || l.target === d); showAt(nodeTip(d), e.clientX, e.clientY); })
-  .on("pointerleave", reset)
-  .on("focus", function (e, d) { const r = this.getBoundingClientRect(); highlight(l => l.source === d || l.target === d); showAt(nodeTip(d), r.right, r.top); })
-  .on("blur", reset);
+// Sankey : qui finance les retraites
+(() => {
+  const CAT = { cot: C.blue, res: C.sky, surcot: C.red, exo: "#f5b97a", csg: "#e8743b", imp: C.orange, etat: C.amber, fam: C.violet, emp: C.wine, trans: "#b4bac6", autres: C.slate };
+  legend("l-sankey", [["Cotisations", CAT.cot], ["Surcotisations", CAT.surcot], ["Exonérations compensées", CAT.exo], ["CSG", CAT.csg], ["Impôts affectés", CAT.imp], ["État", CAT.etat], ["Famille, chômage", CAT.fam], ["Emprunt", CAT.emp], ["Autres", CAT.autres]]);
+  const SRC = [
+    ["cot_prive", "cot", "Cotisations des salariés et indépendants"], ["emp_pub", "cot", "Employeurs publics, au taux du privé"], ["cot_fonc", "cot", "Cotisations des fonctionnaires"],
+    ["cot_spe", "cot", "Cotisations des régimes spéciaux"], ["reserves", "res", "Produits des réserves"], ["surcot", "surcot", "Surcotisations des employeurs publics"],
+    ["exo", "exo", "Exonérations compensées par l'État"], ["csg", "csg", "CSG"], ["impots", "imp", "Impôts et taxes affectés"], ["etat", "etat", "Subventions de l'État"],
+    ["famille", "fam", "Branche famille"], ["unedic", "fam", "Unédic et autres organismes"], ["emprunt", "emp", "Emprunt de l'Urssaf"], ["transferts", "trans", "Versé par d'autres régimes"], ["autres", "autres", "Autres"],
+  ];
+  const REG = [["base", "Base du privé", 187.8, 120.2, 67.7], ["compl", "Complémentaires", 117.1, 108.2, 8.9], ["fonc", "Fonctionnaires", 96.0, 45.9, 50.1], ["spe", "Régimes spéciaux", 17.8, 7.6, 10.2]];
+  const FL = [["cot_prive", "base", 120.2], ["cot_prive", "compl", 105.6], ["emp_pub", "fonc", 31.5], ["cot_fonc", "fonc", 14.4], ["cot_spe", "spe", 7.7], ["reserves", "compl", 5.7], ["surcot", "fonc", 45.4], ["surcot", "spe", 0.9], ["exo", "base", 16.7], ["exo", "compl", 8.3], ["csg", "base", 21.5], ["impots", "base", 14.9], ["impots", "spe", 2.2], ["impots", "compl", 0.6], ["etat", "spe", 5.8], ["etat", "fonc", 1.8], ["famille", "base", 10.7], ["unedic", "compl", 5.8], ["emprunt", "base", 6.0], ["emprunt", "fonc", 2.3], ["transferts", "spe", 2.0], ["transferts", "fonc", 0.4], ["autres", "base", 0.7], ["autres", "spe", 0.6], ["autres", "fonc", 0.2]];
+  const nodes = [
+    ...SRC.map(([id, cat, name]) => ({ id, name, col: 0, color: CAT[cat] })),
+    ...REG.map(([id, name, dep, cv, nc]) => ({ id, name, col: 1, color: C.ink, dep, cv, nc })),
+    { id: "couvert", name: "Couvert", col: 2, color: C.blue }, { id: "non", name: "Non couvert", col: 2, color: C.red },
+    { id: "reserve", name: "Mis en réserve", col: 2, color: C.slate }, { id: "reverse", name: "Reversé à d'autres régimes", col: 2, color: "#b4bac6" },
+    { id: "dep", name: "Pensions et frais", col: 3, color: C.ink },
+  ];
+  const by = Object.fromEntries(nodes.map(n => [n.id, n]));
+  const links = FL.map(([s, t, v]) => ({ source: s, target: t, value: v, color: by[s].color }));
+  REG.forEach(([id, , , cv, nc]) => { links.push({ source: id, target: "couvert", value: cv, color: C.blue }); links.push({ source: id, target: "non", value: nc, color: C.red }); });
+  links.push({ source: "base", target: "reverse", value: 3.1, color: "#b4bac6" }, { source: "compl", target: "reserve", value: 8.7, color: C.slate }, { source: "spe", target: "reserve", value: 1.3, color: C.slate });
+  links.push({ source: "couvert", target: "dep", value: 281.9, color: C.blue }, { source: "non", target: "dep", value: 136.9, color: C.red });
+  const W = 1000, H = 760;
+  const sk = d3.sankey().nodeId(d => d.id).nodeAlign(d => d.col).nodeWidth(9).nodePadding(13).nodeSort(null).linkSort(null).extent([[300, 8], [W - 150, H - 8]]);
+  const gr = sk({ nodes: nodes.map(d => ({ ...d })), links: links.map(d => ({ ...d })) });
+  const svg = svgIn("#c-sankey", W, H, "Sources de financement des retraites");
+  const ls = svg.append("g").selectAll("path").data(gr.links).join("path").attr("d", d3.sankeyLinkHorizontal()).attr("fill", "none").attr("stroke", d => d.color).attr("stroke-opacity", 0.42).attr("stroke-width", d => Math.max(1.5, d.width)).style("mix-blend-mode", "screen")
+    .on("pointermove", function (e, d) { d3.select(this).attr("stroke-opacity", 0.95).style("filter", "brightness(1.35)"); show(`<b>${d.source.name} → ${d.target.name}</b><span class="amt">${fr1(d.value)} Md€</span>`, e); })
+    .on("pointerleave", function () { d3.select(this).attr("stroke-opacity", 0.42).style("filter", null); hide(); });
+  const ns = svg.append("g").selectAll("g").data(gr.nodes).join("g");
+  ns.append("rect").attr("x", d => d.x0).attr("y", d => d.y0).attr("width", d => d.x1 - d.x0).attr("height", d => Math.max(2, d.y1 - d.y0)).attr("fill", d => d.color).attr("rx", 2)
+    .on("pointermove", (e, d) => show(d.col === 1 ? `<b>${d.name}</b>Dépenses : <strong>${fr1(d.dep)} Md€</strong><br>Couvert : ${fr1(d.cv)} Md€<br>Non couvert : <strong>${fr1(d.nc)} Md€</strong> (${Math.round(d.nc / d.dep * 100)} %)` : `<b>${d.name}</b><span class="amt">${fr1(d.id === "dep" ? 418.7 : d.value)} Md€</span>`, e))
+    .on("pointerleave", hide);
+  ns.append("text").attr("x", d => d.col === 0 ? d.x0 - 8 : d.x1 + 8).attr("y", d => (d.y0 + d.y1) / 2).attr("dy", "0.35em").attr("text-anchor", d => d.col === 0 ? "end" : "start")
+    .attr("fill", C.ink).attr("font-size", 12.5).attr("font-weight", 500).style("paint-order", "stroke").attr("stroke", C.card).attr("stroke-width", 4).attr("stroke-linejoin", "round").style("pointer-events", "none")
+    .text(d => `${d.name} ${fr1(d.col === 1 ? d.dep : d.id === "dep" ? 418.7 : d.value)}`);
+})();
 
-// Lexique
-document.getElementById("lexique").innerHTML = LEXIQUE.map(l => {
-  const n = byId[l.id];
-  const sw = n && n.col === 0 ? `<i style="background:${n.color}"></i>` : n && n.col === 2 ? `<i style="background:${n.color}"></i>` : `<i style="background:${css("--bar")}"></i>`;
-  return `<div><dt>${sw}${l.term}</dt><dd>${l.def}</dd></div>`;
-}).join("");
-
-// Tableau par régime
-document.getElementById("regimes").innerHTML = REGIMES.map(r =>
-  `<tr><td>${r.name}</td><td>${fr(r.dep)}</td><td>${fr(r.couvert)}</td><td class="red">${fr(r.non)}</td><td>${Math.round(r.non / r.dep * 100)} %</td></tr>`).join("");
-document.getElementById("regimesTotal").innerHTML =
-  `<tr><td>Total</td><td>${fr(totDep)}</td><td>${fr(totCouvert)}</td><td class="red">${fr(totNon)}</td><td>${Math.round(totNon / totDep * 100)} %</td></tr>`;
+// Pauvreté des 65 ans et plus
+(() => {
+  const pts = [{ y: 1970, v: 35, s: "Retraite et société (Cnav)" }, { y: 2006, v: 10, s: "Retraite et société (Cnav)" }, { y: 2022, v: 11.1, s: "Insee" }];
+  const W = 1000, H = 260, m = { l: 44, r: 250, t: 14, b: 30 };
+  const svg = svgIn("#c-pauv", W, H, "Taux de pauvreté des 65 ans et plus, 1970 à 2022");
+  const x = d3.scaleLinear().domain([1970, 2022]).range([m.l, W - m.r]);
+  const y = d3.scaleLinear().domain([0, 40]).range([H - m.b, m.t]);
+  gridY(svg, y, [0, 10, 20, 30, 40], m.l, W - m.r, d => d + " %");
+  xTicks(svg, x, [1970, 1980, 1990, 2000, 2010, 2022], H - 8);
+  svg.append("path").attr("d", d3.area().x(d => x(d.y)).y0(y(0)).y1(d => y(d.v))(pts)).attr("fill", C.orange).attr("fill-opacity", 0.12);
+  dashed(svg, pts.slice(0, 2).map(d => [x(d.y), y(d.v)]), C.orange);
+  svg.append("path").attr("d", d3.line().x(d => x(d.y)).y(d => y(d.v))(pts.slice(1))).attr("stroke", C.orange).attr("stroke-width", 2.5).attr("fill", "none");
+  svg.append("line").attr("x1", x(2014)).attr("x2", x(2022)).attr("y1", y(14.4)).attr("y2", y(14.4)).attr("stroke", C.ink2).attr("stroke-width", 2).attr("stroke-dasharray", "4 3");
+  svg.append("text").attr("x", x(2022) + 10).attr("y", y(14.4) - 4).attr("fill", C.ink2).attr("font-size", 12).text("14,4 % : ensemble de la population");
+  svg.append("text").attr("x", x(2022) + 10).attr("y", y(11.1) + 12).attr("fill", C.orange).attr("font-size", 12).attr("font-weight", 600).text("11,1 % : 65 ans et plus");
+  svg.append("text").attr("x", x(1970) + 10).attr("y", y(35) + 4).attr("fill", C.ink).attr("font-size", 12.5).attr("font-weight", 600).text("35 % en 1970");
+  pts.forEach(d => hoverDot(svg, x(d.y), y(d.v), C.orange, `<b>${d.y}, 65 ans et plus</b><span class="amt">${fr1(d.v)} %</span><br><span class="d">${d.s}</span>`));
+})();
 </script>
+
 </body>
 </html>
